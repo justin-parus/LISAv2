@@ -11,7 +11,7 @@ function Main {
         $noClient = $true
         $noServer = $true
         foreach ($vmData in $allVMData) {
-            if ($vmData.RoleName -imhtch "client") {
+            if ($vmData.RoleName -imatch "client") {
                 $clientVMData = $vmData
                 $noClient = $false
             }
