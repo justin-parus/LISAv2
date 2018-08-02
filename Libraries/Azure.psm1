@@ -95,98 +95,98 @@ Function ValidateSubscriptionUsage($subscriptionID, $RGXMLData) {
 
 			if ( $testVMSize.StartsWith("DS") -and $testVMSize.EndsWith("v2")) {  #region D-Series postmartem
 				$identifierText = "standardDSv2Family"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 				$premiumVMs += 1
 			} elseif ( $testVMSize.StartsWith("D") -and $testVMSize.EndsWith("s_v3")) {
 				$identifierText = "standardDSv3Family"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 				$premiumVMs += 1
 			} elseif ( $testVMSize.StartsWith("DS") -and !$testVMSize.EndsWith("v2") -and !$testVMSize.EndsWith("v3")) {
-				$identifierText = "standardDSFamily" 
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$identifierText = "standardDSFamily"
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 				$premiumVMs += 1
 			} elseif ( $testVMSize.StartsWith("D") -and !$testVMSize.StartsWith("DS") -and $testVMSize.EndsWith("v2")) {
-				$identifierText = "standardDv2Family" 
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$identifierText = "standardDv2Family"
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("D") -and !$testVMSize.EndsWith("s_v3") -and $testVMSize.EndsWith("v3")) {
-				$identifierText = "standardDv3Family" 
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$identifierText = "standardDv3Family"
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("D") -and !$testVMSize.StartsWith("DS") -and !$testVMSize.EndsWith("v2") -and !$testVMSize.EndsWith("v3")) {
-				$identifierText = "standardDFamily" 
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$identifierText = "standardDFamily"
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("E") -and $testVMSize.EndsWith("s_v3")) {  #region E-Series postmartem
 				$identifierText = "standardESv3Family"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 				$premiumVMs += 1
 			} elseif ( $testVMSize.StartsWith("E") -and !$testVMSize.EndsWith("s_v3") -and $testVMSize.EndsWith("v3")) {
 				$identifierText = "standardEv3Family"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( ( $testVMSize -eq "A8") -or ( $testVMSize -eq "A9") -or ( $testVMSize -eq "A10") -or ( $testVMSize -eq "A11") ) {   #region Standard A series postmartem
 				$identifierText = "standardA8_A11Family"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("A") -and $testVMSize.EndsWith("v2")) {
-				$identifierText = "standardAv2Family" 
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$identifierText = "standardAv2Family"
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("A") -and !$testVMSize.EndsWith("v2")) {
-				$identifierText = "standardA0_A7Family" 
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$identifierText = "standardA0_A7Family"
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("FS")) {  #region Standard F series postamartem
-				$identifierText = "standardFSFamily" 
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$identifierText = "standardFSFamily"
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 				$premiumVMs += 1
 			} elseif ( $testVMSize.StartsWith("F"))	{
 				$identifierText = "standardFFamily"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("GS")) {
-				$identifierText = "standardGSFamily" 
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$identifierText = "standardGSFamily"
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 				$premiumVMs += 1
 			} elseif ( $testVMSize.StartsWith("G"))	{
 				$identifierText = "standardGFamily"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("NV")) {
 				$identifierText = "standardNVFamily"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif (  $testVMSize.StartsWith("NC") -and  $testVMSize.EndsWith("v2") ) {
 				$identifierText = "standardNCv2Family"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("NC")) {
 				$identifierText = "standardNCFamily"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("ND")) {
 				$identifierText = "standardNDFamily"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("H")) {
 				$identifierText = "standardHFamily"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("Basic"))	{
 				$identifierText = "basicAFamily"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} elseif ( $testVMSize.StartsWith("M"))	{    #region M-Series postmartem
 				$identifierText = "standardMSFamily"
-				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage 
-				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage 
+				$currentStatus = SetUsage -currentStatus $currentStatus -text $identifierText  -usage $testVMUsage -AllowedUsagePercentage $AllowedUsagePercentage
+				$overFlowErrors += TestUsage -currentStatus $currentStatus -text $identifierText -AllowedUsagePercentage $AllowedUsagePercentage
 			} else {
 				LogMsg "Requested VM size: $testVMSize is not yet registered to monitor. Usage simulation skipped."
 			}
@@ -283,7 +283,7 @@ Function CreateAllResourceGroupDeployments($setupType, $xmlConfig, $Distro, [str
 #		$OsVHD = $BaseOsVHD
 		$location = $xmlConfig.config.$TestPlatform.General.Location
 		if($region) { $location = $region; }
-	
+
 		if ( $location -imatch "-" ) {
 			$RGCount = $setupTypeData.ResourceGroup.Count
 			$xRegionTest = $true
@@ -421,7 +421,7 @@ Function DeleteResourceGroup([string]$RGName, [switch]$KeepDisks) {
 					} else {
 						LogMsg "Removing $($resource.ResourceName)"
 						try {
-							Remove-AzureRmResource -ResourceId $resource.ResourceId -Force -Verbose    
+							Remove-AzureRmResource -ResourceId $resource.ResourceId -Force -Verbose
 						} catch {
 							LogErr "Error. We will try to remove this in next attempt."
 						}
@@ -468,7 +468,6 @@ Function DeleteResourceGroup([string]$RGName, [switch]$KeepDisks) {
 
 Function RemoveResidualResourceGroupVHDs($ResourceGroup, $storageAccount) {
 	# Verify that the OS VHD does not already exist
-	
 	$azureStorage = $storageAccount
 	LogMsg "Removing residual VHDs of $ResourceGroup from $azureStorage..."
 	$storageContext = (Get-AzureRmStorageAccount | Where-Object{$_.StorageAccountName -match $azureStorage}).Context
@@ -570,10 +569,6 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 				if ( $endpoint.EnableIPv6 -eq "True" ) {
 					$EnableIPv6 = $true
 				}
-				# if ( $endpoint.LoadBalanced -eq "True" )
-				# {
-				# 	$ForceLoadBalancerForSingleVM = $true
-				# }
 				#Check total subnets required
 				if ( $newVM.ExtraNICs -ne 0) {
 					$totalSubnetsRequired = $newVM.ExtraNICs
@@ -620,8 +615,8 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 		} else {
 			$StorageAccountType = "Standard_LRS"
 		}
-		LogMsg "Storage Account Type : $StorageAccountType"  
-		Set-Variable -Name StorageAccountTypeGlobal -Value $StorageAccountType -Scope Global  
+		LogMsg "Storage Account Type : $StorageAccountType"
+		Set-Variable -Name StorageAccountTypeGlobal -Value $StorageAccountType -Scope Global
 	}
 
 	#Condition Existing Storage - Managed Disks
@@ -632,7 +627,7 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 		} else {
 			$StorageAccountType = "Standard_LRS"
 		}
-		Set-Variable -Name StorageAccountTypeGlobal -Value $StorageAccountType -Scope Global      
+		Set-Variable -Name StorageAccountTypeGlobal -Value $StorageAccountType -Scope Global
 	}
 
 	#Condition New Storage - NonManaged disk
@@ -771,7 +766,7 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 	Add-Content -Value "$($indents[2])^location^: ^$($Location.Replace('"',''))^," -Path $jsonFile
 	Add-Content -Value "$($indents[2])^publicIPv4AddressName^: ^$PublicIPName^," -Path $jsonFile
 	Add-Content -Value "$($indents[2])^publicIPv6AddressName^: ^$PublicIPv6Name^," -Path $jsonFile
-									
+
 	Add-Content -Value "$($indents[2])^virtualNetworkName^: ^$virtualNetworkName^," -Path $jsonFile
 	Add-Content -Value "$($indents[2])^nicName^: ^$nicName^," -Path $jsonFile
 	Add-Content -Value "$($indents[2])^addressPrefix^: ^10.0.0.0/16^," -Path $jsonFile
@@ -828,7 +823,7 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 			Add-Content -Value "$($indents[3])^sku^:" -Path $jsonFile
 			Add-Content -Value "$($indents[3]){" -Path $jsonFile
 			Add-Content -Value "$($indents[4])^name^: ^Aligned^" -Path $jsonFile
-			Add-Content -Value "$($indents[3])}," -Path $jsonFile                    
+			Add-Content -Value "$($indents[3])}," -Path $jsonFile
 		}
 
 		if ( $TiPSessionId -and $TiPCluster) {
@@ -840,12 +835,12 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 		Add-Content -Value "$($indents[3])^properties^:" -Path $jsonFile
 		Add-Content -Value "$($indents[3]){" -Path $jsonFile
 		Add-Content -Value "$($indents[4])^platformFaultDomainCount^:2," -Path $jsonFile
-		Add-Content -Value "$($indents[4])^platformUpdateDomainCount^:5" -Path $jsonFile              
+		Add-Content -Value "$($indents[4])^platformUpdateDomainCount^:5" -Path $jsonFile
 		if ( $TiPSessionId -and $TiPCluster) {
 			Add-Content -Value "$($indents[4])^," -Path $jsonFile
 			Add-Content -Value "$($indents[4])^internalData^:" -Path $jsonFile
 			Add-Content -Value "$($indents[4]){" -Path $jsonFile
-			Add-Content -Value "$($indents[5])^pinnedFabricCluster^ : ^$TiPCluster^" -Path $jsonFile  
+			Add-Content -Value "$($indents[5])^pinnedFabricCluster^ : ^$TiPCluster^" -Path $jsonFile
 			Add-Content -Value "$($indents[4])}" -Path $jsonFile
 		}
 		Add-Content -Value "$($indents[3])}" -Path $jsonFile
@@ -1066,7 +1061,7 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 		}
 
 		foreach ( $endpoint in $newVM.EndPoints) {
-			if ( !($endpoint.LoadBalanced) -or ($endpoint.LoadBalanced -eq "False") ) { 
+			if ( !($endpoint.LoadBalanced) -or ($endpoint.LoadBalanced -eq "False") ) {
 				if ( $EndPointAdded ) {
 					Add-Content -Value "$($indents[5])," -Path $jsonFile
 				}
@@ -1094,7 +1089,7 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 	}
 	Add-Content -Value "$($indents[4])]" -Path $jsonFile
 	#endregion
-	
+
 	#region LoadBalanced Endpoints
 	if ( $LBPorts -gt 0 ) {
 		Add-Content -Value "$($indents[4])," -Path $jsonFile
@@ -1112,15 +1107,15 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 			}
 
 			foreach ( $endpoint in $newVM.EndPoints) {
-				if ( ($endpoint.LoadBalanced -eq "True") -and !($addedLBPort -imatch "$($endpoint.Name)-$($endpoint.PublicPort)" ) ) { 
+				if ( ($endpoint.LoadBalanced -eq "True") -and !($addedLBPort -imatch "$($endpoint.Name)-$($endpoint.PublicPort)" ) ) {
 					if ( $EndPointAdded ) {
-						Add-Content -Value "$($indents[5])," -Path $jsonFile            
+						Add-Content -Value "$($indents[5])," -Path $jsonFile
 					}
 					Add-Content -Value "$($indents[5]){" -Path $jsonFile
 					Add-Content -Value "$($indents[6])^name^: ^$RGName-LB-$($endpoint.Name)^," -Path $jsonFile
 					Add-Content -Value "$($indents[6])^properties^:" -Path $jsonFile
 					Add-Content -Value "$($indents[6]){" -Path $jsonFile
-					
+
 					Add-Content -Value "$($indents[7])^frontendIPConfiguration^:" -Path $jsonFile
 					Add-Content -Value "$($indents[7]){" -Path $jsonFile
 					if ($endpoint.EnableIPv6 -eq "True") {
@@ -1156,7 +1151,7 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 							Add-Content -Value "$($indents[7])^idleTimeoutInMinutes^: 5" -Path $jsonFile
 						}
 					}
-	
+
 					Add-Content -Value "$($indents[6])}" -Path $jsonFile
 					Add-Content -Value "$($indents[5])}" -Path $jsonFile
 					LogMsg "Added loadBalancingRule Name:$RGName-LB-$($endpoint.Name) frontendPort:$($endpoint.PublicPort) backendPort:$($endpoint.LocalPort) Protocol:$($endpoint.Protocol)."
@@ -1184,7 +1179,7 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 		$addedProbes = $null
 		$role = 0
 		foreach ( $newVM in $RGXMLData.VirtualMachine) {
-	
+
 			if($newVM.RoleName) {
 				$vmName = $newVM.RoleName
 			} else {
@@ -1192,10 +1187,10 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 			}
 
 			foreach ( $endpoint in $newVM.EndPoints) {
-				if ( ($endpoint.LoadBalanced -eq "True") ) { 
+				if ( ($endpoint.LoadBalanced -eq "True") ) {
 					if ( $endpoint.ProbePort -and !($addedProbes -imatch "$($endpoint.Name)-probe-$($endpoint.ProbePort)")) {
 						if ( $EndPointAdded ) {
-							Add-Content -Value "$($indents[5])," -Path $jsonFile            
+							Add-Content -Value "$($indents[5])," -Path $jsonFile
 						}
 						Add-Content -Value "$($indents[5]){" -Path $jsonFile
 						Add-Content -Value "$($indents[6])^name^: ^$RGName-LB-$($endpoint.Name)-probe^," -Path $jsonFile
@@ -1239,7 +1234,7 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 		} else {
 			$instanceSize = $newVM.ARMInstanceSize
 		}
-	
+
 		$ExistingSubnet = $newVM.ARMSubnetName
 		#$DnsServerIP = $RGXMLData.DnsServerIP
 		if($newVM.RoleName)	{
@@ -1360,83 +1355,79 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 			$NicName = $NetworkInterface.Name
 			$NicNameList.add($NicName)
 			Add-Content -Value "$($indents[2]){" -Path $jsonFile
-				Add-Content -Value "$($indents[3])^apiVersion^: ^2016-09-01^," -Path $jsonFile
-				Add-Content -Value "$($indents[3])^type^: ^Microsoft.Network/networkInterfaces^," -Path $jsonFile
-				Add-Content -Value "$($indents[3])^name^: ^$NicName^," -Path $jsonFile
-				Add-Content -Value "$($indents[3])^location^: ^[variables('location')]^," -Path $jsonFile
-				Add-Content -Value "$($indents[3])^dependsOn^: " -Path $jsonFile
-				Add-Content -Value "$($indents[3])[" -Path $jsonFile
-					Add-Content -Value "$($indents[4])^[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]^," -Path $jsonFile
-					Add-Content -Value "$($indents[4])^[variables('lbID')]^" -Path $jsonFile
-				Add-Content -Value "$($indents[3])]," -Path $jsonFile
-
-				Add-Content -Value "$($indents[3])^properties^:" -Path $jsonFile
-				Add-Content -Value "$($indents[3]){" -Path $jsonFile
-					Add-Content -Value "$($indents[4])^ipConfigurations^: " -Path $jsonFile
-					Add-Content -Value "$($indents[4])[" -Path $jsonFile
-						Add-Content -Value "$($indents[5]){" -Path $jsonFile
-							Add-Content -Value "$($indents[6])^name^: ^IPv4Config1^," -Path $jsonFile
-							Add-Content -Value "$($indents[6])^properties^: " -Path $jsonFile
-							Add-Content -Value "$($indents[6]){" -Path $jsonFile
-								Add-Content -Value "$($indents[7])^subnet^:" -Path $jsonFile
-								Add-Content -Value "$($indents[7]){" -Path $jsonFile
-									Add-Content -Value "$($indents[8])^id^: ^[variables('defaultSubnetID')]^" -Path $jsonFile
-								Add-Content -Value "$($indents[7])}" -Path $jsonFile
-							Add-Content -Value "$($indents[6])}" -Path $jsonFile
-						Add-Content -Value "$($indents[5])}" -Path $jsonFile
-					Add-Content -Value "$($indents[4])]" -Path $jsonFile
-			if ($EnableAcceleratedNetworking -or $CurrentTestData.AdditionalHWConfig.Networking -imatch "SRIOV")
-			{
+			Add-Content -Value "$($indents[3])^apiVersion^: ^2016-09-01^," -Path $jsonFile
+			Add-Content -Value "$($indents[3])^type^: ^Microsoft.Network/networkInterfaces^," -Path $jsonFile
+			Add-Content -Value "$($indents[3])^name^: ^$NicName^," -Path $jsonFile
+			Add-Content -Value "$($indents[3])^location^: ^[variables('location')]^," -Path $jsonFile
+			Add-Content -Value "$($indents[3])^dependsOn^: " -Path $jsonFile
+			Add-Content -Value "$($indents[3])[" -Path $jsonFile
+			Add-Content -Value "$($indents[4])^[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]^," -Path $jsonFile
+			Add-Content -Value "$($indents[4])^[variables('lbID')]^" -Path $jsonFile
+			Add-Content -Value "$($indents[3])]," -Path $jsonFile
+			Add-Content -Value "$($indents[3])^properties^:" -Path $jsonFile
+			Add-Content -Value "$($indents[3]){" -Path $jsonFile
+			Add-Content -Value "$($indents[4])^ipConfigurations^: " -Path $jsonFile
+			Add-Content -Value "$($indents[4])[" -Path $jsonFile
+			Add-Content -Value "$($indents[5]){" -Path $jsonFile
+			Add-Content -Value "$($indents[6])^name^: ^IPv4Config1^," -Path $jsonFile
+			Add-Content -Value "$($indents[6])^properties^: " -Path $jsonFile
+			Add-Content -Value "$($indents[6]){" -Path $jsonFile
+			Add-Content -Value "$($indents[7])^subnet^:" -Path $jsonFile
+			Add-Content -Value "$($indents[7]){" -Path $jsonFile
+			Add-Content -Value "$($indents[8])^id^: ^[variables('defaultSubnetID')]^" -Path $jsonFile
+			Add-Content -Value "$($indents[7])}" -Path $jsonFile
+			Add-Content -Value "$($indents[6])}" -Path $jsonFile
+			Add-Content -Value "$($indents[5])}" -Path $jsonFile
+			Add-Content -Value "$($indents[4])]" -Path $jsonFile
+			if ($EnableAcceleratedNetworking -or $CurrentTestData.AdditionalHWConfig.Networking -imatch "SRIOV") {
 				Add-Content -Value "$($indents[4])," -Path $jsonFile
 				Add-Content -Value "$($indents[4])^enableAcceleratedNetworking^: true" -Path $jsonFile
 				LogMsg "Enabled Accelerated Networking for $NicName."
 			}
-				Add-Content -Value "$($indents[3])}" -Path $jsonFile
+			Add-Content -Value "$($indents[3])}" -Path $jsonFile
 			Add-Content -Value "$($indents[2])}," -Path $jsonFile
 		}
 
 		#Add Bulk NICs
 		$currentVMNics = 0
-		while ($currentVMNics -lt $newVM.ExtraNICs)
-		{
+		while ($currentVMNics -lt $newVM.ExtraNICs) {
 			$totalRGNics += 1
 			$currentVMNics += 1
 			$NicName = "ExtraNetworkCard-$currentVMNics-$($vmName)"
 			$NicNameList.add($NicName)
 			Add-Content -Value "$($indents[2]){" -Path $jsonFile
-				Add-Content -Value "$($indents[3])^apiVersion^: ^2016-09-01^," -Path $jsonFile
-				Add-Content -Value "$($indents[3])^type^: ^Microsoft.Network/networkInterfaces^," -Path $jsonFile
-				Add-Content -Value "$($indents[3])^name^: ^$NicName^," -Path $jsonFile
-				Add-Content -Value "$($indents[3])^location^: ^[variables('location')]^,"   -Path $jsonFile
-				Add-Content -Value "$($indents[3])^dependsOn^: " -Path $jsonFile
-				Add-Content -Value "$($indents[3])[" -Path $jsonFile
-					Add-Content -Value "$($indents[4])^[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]^," -Path $jsonFile
-					Add-Content -Value "$($indents[4])^[variables('lbID')]^" -Path $jsonFile
-				Add-Content -Value "$($indents[3])]," -Path $jsonFile
+			Add-Content -Value "$($indents[3])^apiVersion^: ^2016-09-01^," -Path $jsonFile
+			Add-Content -Value "$($indents[3])^type^: ^Microsoft.Network/networkInterfaces^," -Path $jsonFile
+			Add-Content -Value "$($indents[3])^name^: ^$NicName^," -Path $jsonFile
+			Add-Content -Value "$($indents[3])^location^: ^[variables('location')]^,"   -Path $jsonFile
+			Add-Content -Value "$($indents[3])^dependsOn^: " -Path $jsonFile
+			Add-Content -Value "$($indents[3])[" -Path $jsonFile
+			Add-Content -Value "$($indents[4])^[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]^," -Path $jsonFile
+			Add-Content -Value "$($indents[4])^[variables('lbID')]^" -Path $jsonFile
+			Add-Content -Value "$($indents[3])]," -Path $jsonFile
 
-				Add-Content -Value "$($indents[3])^properties^:" -Path $jsonFile
-				Add-Content -Value "$($indents[3]){" -Path $jsonFile
-					Add-Content -Value "$($indents[4])^ipConfigurations^: " -Path $jsonFile
-					Add-Content -Value "$($indents[4])[" -Path $jsonFile
-						Add-Content -Value "$($indents[5]){" -Path $jsonFile
-							Add-Content -Value "$($indents[6])^name^: ^IPv4Config1^," -Path $jsonFile
-							Add-Content -Value "$($indents[6])^properties^: " -Path $jsonFile
-							Add-Content -Value "$($indents[6]){" -Path $jsonFile
-								Add-Content -Value "$($indents[7])^subnet^:" -Path $jsonFile
-								Add-Content -Value "$($indents[7]){" -Path $jsonFile
-									Add-Content -Value "$($indents[8])^id^: ^[concat(variables('vnetID'),'/subnets/', 'ExtraSubnet-$currentVMNics')]^" -Path $jsonFile
-									LogMsg "  $NicName is part of subnet - ExtraSubnet-$currentVMNics"
-								Add-Content -Value "$($indents[7])}" -Path $jsonFile
-							Add-Content -Value "$($indents[6])}" -Path $jsonFile
-						Add-Content -Value "$($indents[5])}" -Path $jsonFile
-					Add-Content -Value "$($indents[4])]" -Path $jsonFile
-			if ($EnableAcceleratedNetworking -or $CurrentTestData.AdditionalHWConfig.Networking -imatch "SRIOV")
-			{
+			Add-Content -Value "$($indents[3])^properties^:" -Path $jsonFile
+			Add-Content -Value "$($indents[3]){" -Path $jsonFile
+			Add-Content -Value "$($indents[4])^ipConfigurations^: " -Path $jsonFile
+			Add-Content -Value "$($indents[4])[" -Path $jsonFile
+			Add-Content -Value "$($indents[5]){" -Path $jsonFile
+			Add-Content -Value "$($indents[6])^name^: ^IPv4Config1^," -Path $jsonFile
+			Add-Content -Value "$($indents[6])^properties^: " -Path $jsonFile
+			Add-Content -Value "$($indents[6]){" -Path $jsonFile
+			Add-Content -Value "$($indents[7])^subnet^:" -Path $jsonFile
+			Add-Content -Value "$($indents[7]){" -Path $jsonFile
+			Add-Content -Value "$($indents[8])^id^: ^[concat(variables('vnetID'),'/subnets/', 'ExtraSubnet-$currentVMNics')]^" -Path $jsonFile
+			LogMsg "  $NicName is part of subnet - ExtraSubnet-$currentVMNics"
+			Add-Content -Value "$($indents[7])}" -Path $jsonFile
+			Add-Content -Value "$($indents[6])}" -Path $jsonFile
+			Add-Content -Value "$($indents[5])}" -Path $jsonFile
+			Add-Content -Value "$($indents[4])]" -Path $jsonFile
+			if ($EnableAcceleratedNetworking -or $CurrentTestData.AdditionalHWConfig.Networking -imatch "SRIOV") {
 				Add-Content -Value "$($indents[4])," -Path $jsonFile
 				Add-Content -Value "$($indents[4])^enableAcceleratedNetworking^: true" -Path $jsonFile
 				LogMsg "  Enabled Accelerated Networking for $NicName."
 			}
-				Add-Content -Value "$($indents[3])}" -Path $jsonFile
+			Add-Content -Value "$($indents[3])}" -Path $jsonFile
 			Add-Content -Value "$($indents[2])}," -Path $jsonFile
 		}
 
@@ -1444,306 +1435,269 @@ Function GenerateAzureDeployJSONFile ($RGName, $osImage, $osVHD, $RGXMLData, $Lo
 		#region virtualMachines
 		LogMsg "Adding Virtual Machine $vmName"
 		Add-Content -Value "$($indents[2]){" -Path $jsonFile
-			Add-Content -Value "$($indents[3])^apiVersion^: ^2017-03-30^," -Path $jsonFile
-			Add-Content -Value "$($indents[3])^type^: ^Microsoft.Compute/virtualMachines^," -Path $jsonFile
-			Add-Content -Value "$($indents[3])^name^: ^$vmName^," -Path $jsonFile
-			Add-Content -Value "$($indents[3])^location^: ^[variables('location')]^," -Path $jsonFile
-			if ($publisher -imatch "clear-linux-project")
-			{
-				LogMsg "  Adding plan information for clear-linux.."
-				Add-Content -Value "$($indents[3])^plan^:" -Path $jsonFile
-				Add-Content -Value "$($indents[3]){" -Path $jsonFile
-					Add-Content -Value "$($indents[4])^name^: ^$sku^," -Path $jsonFile
-					Add-Content -Value "$($indents[4])^product^: ^clear-linux-os^," -Path $jsonFile
-					Add-Content -Value "$($indents[4])^publisher^: ^clear-linux-project^" -Path $jsonFile
-				Add-Content -Value "$($indents[3])}," -Path $jsonFile
-			}
-			Add-Content -Value "$($indents[3])^tags^: {^GlobalRandom^: ^$GlobalRandom^}," -Path $jsonFile
-			Add-Content -Value "$($indents[3])^dependsOn^: " -Path $jsonFile
-			Add-Content -Value "$($indents[3])[" -Path $jsonFile
-			if ($ExistingRG)
-			{
-				#Add-Content -Value "$($indents[4])^[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]^," -Path $jsonFile
-			}
-			else
-			{
-				Add-Content -Value "$($indents[4])^[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]^," -Path $jsonFile
-			}
-			if ( $NewARMStorageAccountType)
-			{
-				Add-Content -Value "$($indents[4])^[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]^," -Path $jsonFile
-			}
-			if ( $UseManagedDisks -and $OsVHD )
-			{
-				Add-Content -Value "$($indents[4])^[resourceId('Microsoft.Compute/images', '$RGName-Image')]^," -Path $jsonFile
-			}
-
-			if($NicNameList)
-			{
-				foreach($NicName in $NicNameList)
-				{
-					Add-Content -Value "$($indents[4])^[concat('Microsoft.Network/networkInterfaces/', '$NicName')]^," -Path $jsonFile
-				}
-			}
-					Add-Content -Value "$($indents[4])^[concat('Microsoft.Network/networkInterfaces/', '$NIC')]^" -Path $jsonFile
-				Add-Content -Value "$($indents[3])]," -Path $jsonFile
-
-			#region VM Properties
-			Add-Content -Value "$($indents[3])^properties^:" -Path $jsonFile
+		Add-Content -Value "$($indents[3])^apiVersion^: ^2017-03-30^," -Path $jsonFile
+		Add-Content -Value "$($indents[3])^type^: ^Microsoft.Compute/virtualMachines^," -Path $jsonFile
+		Add-Content -Value "$($indents[3])^name^: ^$vmName^," -Path $jsonFile
+		Add-Content -Value "$($indents[3])^location^: ^[variables('location')]^," -Path $jsonFile
+		if ($publisher -imatch "clear-linux-project") {
+			LogMsg "  Adding plan information for clear-linux.."
+			Add-Content -Value "$($indents[3])^plan^:" -Path $jsonFile
 			Add-Content -Value "$($indents[3]){" -Path $jsonFile
-				#region availabilitySet
-				Add-Content -Value "$($indents[4])^availabilitySet^: " -Path $jsonFile
-				Add-Content -Value "$($indents[4]){" -Path $jsonFile
-				Add-Content -Value "$($indents[5])^id^: ^[resourceId('Microsoft.Compute/availabilitySets','$customAVSetName')]^" -Path $jsonFile
-				Add-Content -Value "$($indents[4])}," -Path $jsonFile
-				#endregion
+			Add-Content -Value "$($indents[4])^name^: ^$sku^," -Path $jsonFile
+			Add-Content -Value "$($indents[4])^product^: ^clear-linux-os^," -Path $jsonFile
+			Add-Content -Value "$($indents[4])^publisher^: ^clear-linux-project^" -Path $jsonFile
+			Add-Content -Value "$($indents[3])}," -Path $jsonFile
+		}
+		Add-Content -Value "$($indents[3])^tags^: {^GlobalRandom^: ^$GlobalRandom^}," -Path $jsonFile
+		Add-Content -Value "$($indents[3])^dependsOn^: " -Path $jsonFile
+		Add-Content -Value "$($indents[3])[" -Path $jsonFile
+		if ($ExistingRG) {
+			#Add-Content -Value "$($indents[4])^[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]^," -Path $jsonFile
+		} else {
+			Add-Content -Value "$($indents[4])^[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]^," -Path $jsonFile
+		}
 
-				#region Hardware Profile
-				Add-Content -Value "$($indents[4])^hardwareProfile^: " -Path $jsonFile
-				Add-Content -Value "$($indents[4]){" -Path $jsonFile
-					Add-Content -Value "$($indents[5])^vmSize^: ^$instanceSize^" -Path $jsonFile
-				Add-Content -Value "$($indents[4])}," -Path $jsonFile
-				#endregion
+		if ( $NewARMStorageAccountType) {
+			Add-Content -Value "$($indents[4])^[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]^," -Path $jsonFile
+		}
 
-				#region OSProfile
-				Add-Content -Value "$($indents[4])^osProfile^: " -Path $jsonFile
-				Add-Content -Value "$($indents[4]){" -Path $jsonFile
-					Add-Content -Value "$($indents[5])^computername^: ^$vmName^," -Path $jsonFile
-					Add-Content -Value "$($indents[5])^adminUsername^: ^[variables('adminUserName')]^," -Path $jsonFile
-					Add-Content -Value "$($indents[5])^adminPassword^: ^[variables('adminPassword')]^" -Path $jsonFile
-					#Add-Content -Value "$($indents[5])^linuxConfiguration^:" -Path $jsonFile
-					#Add-Content -Value "$($indents[5]){" -Path $jsonFile
-					#    Add-Content -Value "$($indents[6])^ssh^:" -Path $jsonFile
-					#    Add-Content -Value "$($indents[6]){" -Path $jsonFile
-					#        Add-Content -Value "$($indents[7])^publicKeys^:" -Path $jsonFile
-					#        Add-Content -Value "$($indents[7])[" -Path $jsonFile
-					#            Add-Content -Value "$($indents[8])[" -Path $jsonFile
-					#                Add-Content -Value "$($indents[9]){" -Path $jsonFile
-					#                    Add-Content -Value "$($indents[10])^path^:^$sshPath^," -Path $jsonFile
-					#                    Add-Content -Value "$($indents[10])^keyData^:^$sshKeyData^" -Path $jsonFile
-					#                Add-Content -Value "$($indents[9])}" -Path $jsonFile
-					#            Add-Content -Value "$($indents[8])]" -Path $jsonFile
-					#        Add-Content -Value "$($indents[7])]" -Path $jsonFile
-					#    Add-Content -Value "$($indents[6])}" -Path $jsonFile
-					#Add-Content -Value "$($indents[5])}" -Path $jsonFile
-				Add-Content -Value "$($indents[4])}," -Path $jsonFile
-				#endregion
+		if ( $UseManagedDisks -and $OsVHD ) {
+			Add-Content -Value "$($indents[4])^[resourceId('Microsoft.Compute/images', '$RGName-Image')]^," -Path $jsonFile
+		}
 
-				#region Storage Profile
-				Add-Content -Value "$($indents[4])^storageProfile^: " -Path $jsonFile
-				Add-Content -Value "$($indents[4]){" -Path $jsonFile
-				if ($ARMImage -and !$osVHD)
-				{
-					LogMsg ">>Using ARMImage : $($ARMImage.Publisher):$($ARMImage.Offer):$($ARMImage.Sku):$($ARMImage.Version)"
-					Add-Content -Value "$($indents[5])^imageReference^ : " -Path $jsonFile
-					Add-Content -Value "$($indents[5]){" -Path $jsonFile
-						Add-Content -Value "$($indents[6])^publisher^: ^$publisher^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^offer^: ^$offer^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^sku^: ^$sku^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^version^: ^$version^" -Path $jsonFile
-					Add-Content -Value "$($indents[5])}," -Path $jsonFile
-				}
-				elseif ($CurrentTestData.Publisher -and $CurrentTestData.Offer)
-				{
-					Add-Content -Value "$($indents[5])^imageReference^ : " -Path $jsonFile
-					Add-Content -Value "$($indents[5]){" -Path $jsonFile
-					Add-Content -Value "$($indents[6])^publisher^: ^$publisher^," -Path $jsonFile
-					Add-Content -Value "$($indents[6])^offer^: ^$offer^," -Path $jsonFile
-					Add-Content -Value "$($indents[6])^sku^: ^$sku^," -Path $jsonFile
-					Add-Content -Value "$($indents[6])^version^: ^$version^" -Path $jsonFile
-					Add-Content -Value "$($indents[5])}," -Path $jsonFile
-				}
-				elseif ( $UseManagedDisks -and $OsVHD )
-				{
-					Add-Content -Value "$($indents[5])^imageReference^ : " -Path $jsonFile
-					Add-Content -Value "$($indents[5]){" -Path $jsonFile
-					Add-Content -Value "$($indents[6])^id^: ^[resourceId('Microsoft.Compute/images', '$RGName-Image')]^," -Path $jsonFile
-					Add-Content -Value "$($indents[5])}," -Path $jsonFile
-				}
-				Add-Content -Value "$($indents[5])^osDisk^ : " -Path $jsonFile
-				Add-Content -Value "$($indents[5]){" -Path $jsonFile
-				if($osVHD)
-				{
-					if ($UseManagedDisks)
-					{
-						LogMsg ">>Using VHD : $osVHD (Converted to Managed Image)"
-						Add-Content -Value "$($indents[6])^osType^: ^Linux^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^name^: ^$vmName-OSDisk^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^managedDisk^: " -Path $jsonFile
-						Add-Content -Value "$($indents[6]){" -Path $jsonFile
-							Add-Content -Value "$($indents[7])^storageAccountType^: ^$StorageAccountType^" -Path $jsonFile
-
-						Add-Content -Value "$($indents[6])}," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^caching^: ^ReadWrite^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^createOption^: ^FromImage^" -Path $jsonFile
-					}
-					else
-					{
-						LogMsg ">>Using VHD : $osVHD"
-						Add-Content -Value "$($indents[6])^image^: " -Path $jsonFile
-						Add-Content -Value "$($indents[6]){" -Path $jsonFile
-							Add-Content -Value "$($indents[7])^uri^: ^[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/','$osVHD')]^" -Path $jsonFile
-						Add-Content -Value "$($indents[6])}," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^osType^: ^Linux^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^name^: ^$vmName-OSDisk^," -Path $jsonFile
-						#Add-Content -Value "$($indents[6])^osType^: ^Linux^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^vhd^: " -Path $jsonFile
-						Add-Content -Value "$($indents[6]){" -Path $jsonFile
-							Add-Content -Value "$($indents[7])^uri^: ^[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/','$vmName-$RGrandomWord-osdisk.vhd')]^" -Path $jsonFile
-						Add-Content -Value "$($indents[6])}," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^caching^: ^ReadWrite^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^createOption^: ^FromImage^" -Path $jsonFile
-					}
-				}
-				else
-				{
-					if ($UseManagedDisks)
-					{
-						Add-Content -Value "$($indents[6])^name^: ^$vmName-OSDisk^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^createOption^: ^FromImage^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^managedDisk^: " -Path $jsonFile
-						Add-Content -Value "$($indents[6]){" -Path $jsonFile
-							Add-Content -Value "$($indents[7])^storageAccountType^: ^$StorageAccountType^" -Path $jsonFile
-						Add-Content -Value "$($indents[6])}" -Path $jsonFile
-						LogMsg "Added managed OS disk : $vmName-OSDisk"
-
-					}
-					else
-					{
-						Add-Content -Value "$($indents[6])^name^: ^$vmName-OSDisk^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^createOption^: ^FromImage^," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^vhd^: " -Path $jsonFile
-						Add-Content -Value "$($indents[6]){" -Path $jsonFile
-							Add-Content -Value "$($indents[7])^uri^: ^[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/','$vmName-$RGrandomWord-osdisk.vhd')]^" -Path $jsonFile
-						Add-Content -Value "$($indents[6])}," -Path $jsonFile
-						Add-Content -Value "$($indents[6])^caching^: ^ReadWrite^" -Path $jsonFile
-					}
-				}
-				Add-Content -Value "$($indents[5])}," -Path $jsonFile
-				$dataDiskAdded = $false
-				Add-Content -Value "$($indents[5])^dataDisks^ : " -Path $jsonFile
-				Add-Content -Value "$($indents[5])[" -Path $jsonFile
-				foreach ( $dataDisk in $newVM.DataDisk )
-				{
-					if ( $dataDisk.LUN -ge 0 )
-					{
-						if( $dataDiskAdded )
-						{
-							Add-Content -Value "$($indents[6])," -Path $jsonFile
-						}
-
-						if ($UseManagedDisks)
-						{
-							Add-Content -Value "$($indents[6]){" -Path $jsonFile
-							Add-Content -Value "$($indents[7])^name^: ^$vmName-disk-lun-$($dataDisk.LUN)^," -Path $jsonFile
-							Add-Content -Value "$($indents[7])^diskSizeGB^: ^$($dataDisk.DiskSizeInGB)^," -Path $jsonFile
-							Add-Content -Value "$($indents[7])^lun^: ^$($dataDisk.LUN)^," -Path $jsonFile
-							Add-Content -Value "$($indents[7])^createOption^: ^Empty^," -Path $jsonFile
-							Add-Content -Value "$($indents[7])^caching^: ^$($dataDisk.HostCaching)^," -Path $jsonFile
-							Add-Content -Value "$($indents[7])^managedDisk^:" -Path $jsonFile
-							Add-Content -Value "$($indents[7]){" -Path $jsonFile
-							Add-Content -Value "$($indents[8])^storageAccountType^: ^$StorageAccountType^" -Path $jsonFile
-							Add-Content -Value "$($indents[7])}" -Path $jsonFile
-							Add-Content -Value "$($indents[6])}" -Path $jsonFile
-							LogMsg "Added managed $($dataDisk.DiskSizeInGB)GB Datadisk to $($dataDisk.LUN)."
-						}
-						else
-						{
-							Add-Content -Value "$($indents[6]){" -Path $jsonFile
-							Add-Content -Value "$($indents[7])^name^: ^$vmName-disk-lun-$($dataDisk.LUN)^," -Path $jsonFile
-							Add-Content -Value "$($indents[7])^diskSizeGB^: ^$($dataDisk.DiskSizeInGB)^," -Path $jsonFile
-							Add-Content -Value "$($indents[7])^lun^: ^$($dataDisk.LUN)^," -Path $jsonFile
-							Add-Content -Value "$($indents[7])^createOption^: ^Empty^," -Path $jsonFile
-							Add-Content -Value "$($indents[7])^caching^: ^$($dataDisk.HostCaching)^," -Path $jsonFile
-							Add-Content -Value "$($indents[7])^vhd^:" -Path $jsonFile
-							Add-Content -Value "$($indents[7]){" -Path $jsonFile
-							Add-Content -Value "$($indents[8])^uri^: ^[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/','$vmName-$RGrandomWord-disk-lun-$($dataDisk.LUN).vhd')]^" -Path $jsonFile
-							Add-Content -Value "$($indents[7])}" -Path $jsonFile
-							Add-Content -Value "$($indents[6])}" -Path $jsonFile
-							LogMsg "Added unmanaged $($dataDisk.DiskSizeInGB)GB Datadisk to $($dataDisk.LUN)."
-						}
-						$dataDiskAdded = $true
-					}
-				}
-				Add-Content -Value "$($indents[5])]" -Path $jsonFile
-				Add-Content -Value "$($indents[4])}" -Path $jsonFile
-				Add-Content -Value "$($indents[4])," -Path $jsonFile
-				#endregion
-
-				LogMsg "Added Virtual Machine $vmName"
-
-				#region Network Profile
-				Add-Content -Value "$($indents[4])^networkProfile^: " -Path $jsonFile
-				Add-Content -Value "$($indents[4]){" -Path $jsonFile
-				Add-Content -Value "$($indents[5])^networkInterfaces^: " -Path $jsonFile
-				Add-Content -Value "$($indents[5])[" -Path $jsonFile
-				#region configure multiple Nics to networkProfile
-				if($NicNameList)
-				{
-					foreach($NicName in $NicNameList)
-					{
-						Add-Content -Value "$($indents[6]){" -Path $jsonFile
-						Add-Content -Value "$($indents[7])^id^: ^[resourceId('Microsoft.Network/networkInterfaces','$NicName')]^," -Path $jsonFile
-						Add-Content -Value "$($indents[7])^properties^: { ^primary^: false }" -Path $jsonFile
-						Add-Content -Value "$($indents[6])}," -Path $jsonFile
-						LogMsg "Attached Network Interface Card `"$NicName`" to Virtual Machine `"$vmName`"."
-					}
-					Add-Content -Value "$($indents[6]){" -Path $jsonFile
-					Add-Content -Value "$($indents[7])^id^: ^[resourceId('Microsoft.Network/networkInterfaces','$NIC')]^," -Path $jsonFile
-					Add-Content -Value "$($indents[7])^properties^: { ^primary^: true }" -Path $jsonFile
-					Add-Content -Value "$($indents[6])}" -Path $jsonFile
-					LogMsg "Attached Network Interface Card `"$NIC`" to Virtual Machine `"$vmName`"."
-				}
-				else
-				{
-					Add-Content -Value "$($indents[6]){" -Path $jsonFile
-					Add-Content -Value "$($indents[7])^id^: ^[resourceId('Microsoft.Network/networkInterfaces','$NIC')]^" -Path $jsonFile
-					Add-Content -Value "$($indents[6])}" -Path $jsonFile
-				}
-				#endregion
-				Add-Content -Value "$($indents[5])]" -Path $jsonFile
-				Add-Content -Value "$($indents[4])}" -Path $jsonFile
-
-				#region Enable boot dignostics.
-				Add-Content -Value "$($indents[4])," -Path $jsonFile
-				Add-Content -Value "$($indents[4])^diagnosticsProfile^: " -Path $jsonFile
-				Add-Content -Value "$($indents[4]){" -Path $jsonFile
-				Add-Content -Value "$($indents[5])^bootDiagnostics^: " -Path $jsonFile
-				Add-Content -Value "$($indents[5]){" -Path $jsonFile
-				Add-Content -Value "$($indents[6])^enabled^: true," -Path $jsonFile
-				Add-Content -Value "$($indents[6])^storageUri^: ^[reference(resourceId('$diagnosticRG', 'Microsoft.Storage/storageAccounts', '$bootDiagnosticsSA'), '2015-06-15').primaryEndpoints['blob']]^" -Path $jsonFile
-				Add-Content -Value "$($indents[5])}" -Path $jsonFile
-				Add-Content -Value "$($indents[4])}" -Path $jsonFile
-				#endregion
-
-				Add-Content -Value "$($indents[3])}" -Path $jsonFile
-				#endregion
-
-				Add-Content -Value "$($indents[2])}" -Path $jsonFile
-				#endregion
-
-				$vmAdded = $true
-				$role  = $role + 1
-				$vmCount = $role
+		if($NicNameList) {
+			foreach($NicName in $NicNameList) {
+				Add-Content -Value "$($indents[4])^[concat('Microsoft.Network/networkInterfaces/', '$NicName')]^," -Path $jsonFile
 			}
-			Add-Content -Value "$($indents[1])]" -Path $jsonFile
-			#endregion
+		}
 
-			Add-Content -Value "$($indents[0])}" -Path $jsonFile
-			Set-Content -Path $jsonFile -Value (Get-Content $jsonFile).Replace("^",'"') -Force
-			#endregion
+		Add-Content -Value "$($indents[4])^[concat('Microsoft.Network/networkInterfaces/', '$NIC')]^" -Path $jsonFile
+		Add-Content -Value "$($indents[3])]," -Path $jsonFile
+
+		#region VM Properties
+		Add-Content -Value "$($indents[3])^properties^:" -Path $jsonFile
+		Add-Content -Value "$($indents[3]){" -Path $jsonFile
+		#region availabilitySet
+		Add-Content -Value "$($indents[4])^availabilitySet^: " -Path $jsonFile
+		Add-Content -Value "$($indents[4]){" -Path $jsonFile
+		Add-Content -Value "$($indents[5])^id^: ^[resourceId('Microsoft.Compute/availabilitySets','$customAVSetName')]^" -Path $jsonFile
+		Add-Content -Value "$($indents[4])}," -Path $jsonFile
+		#endregion
+
+		#region Hardware Profile
+		Add-Content -Value "$($indents[4])^hardwareProfile^: " -Path $jsonFile
+		Add-Content -Value "$($indents[4]){" -Path $jsonFile
+		Add-Content -Value "$($indents[5])^vmSize^: ^$instanceSize^" -Path $jsonFile
+		Add-Content -Value "$($indents[4])}," -Path $jsonFile
+		#endregion
+
+		#region OSProfile
+		Add-Content -Value "$($indents[4])^osProfile^: " -Path $jsonFile
+		Add-Content -Value "$($indents[4]){" -Path $jsonFile
+		Add-Content -Value "$($indents[5])^computername^: ^$vmName^," -Path $jsonFile
+		Add-Content -Value "$($indents[5])^adminUsername^: ^[variables('adminUserName')]^," -Path $jsonFile
+		Add-Content -Value "$($indents[5])^adminPassword^: ^[variables('adminPassword')]^" -Path $jsonFile
+		#Add-Content -Value "$($indents[5])^linuxConfiguration^:" -Path $jsonFile
+		#Add-Content -Value "$($indents[5]){" -Path $jsonFile
+		#    Add-Content -Value "$($indents[6])^ssh^:" -Path $jsonFile
+		#    Add-Content -Value "$($indents[6]){" -Path $jsonFile
+		#        Add-Content -Value "$($indents[7])^publicKeys^:" -Path $jsonFile
+		#        Add-Content -Value "$($indents[7])[" -Path $jsonFile
+		#            Add-Content -Value "$($indents[8])[" -Path $jsonFile
+		#                Add-Content -Value "$($indents[9]){" -Path $jsonFile
+		#                    Add-Content -Value "$($indents[10])^path^:^$sshPath^," -Path $jsonFile
+		#                    Add-Content -Value "$($indents[10])^keyData^:^$sshKeyData^" -Path $jsonFile
+		#                Add-Content -Value "$($indents[9])}" -Path $jsonFile
+		#            Add-Content -Value "$($indents[8])]" -Path $jsonFile
+		#        Add-Content -Value "$($indents[7])]" -Path $jsonFile
+		#    Add-Content -Value "$($indents[6])}" -Path $jsonFile
+		#Add-Content -Value "$($indents[5])}" -Path $jsonFile
+		Add-Content -Value "$($indents[4])}," -Path $jsonFile
+		#endregion
+
+		#region Storage Profile
+		Add-Content -Value "$($indents[4])^storageProfile^: " -Path $jsonFile
+		Add-Content -Value "$($indents[4]){" -Path $jsonFile
+		if ($ARMImage -and !$osVHD) {
+			LogMsg ">>Using ARMImage : $($ARMImage.Publisher):$($ARMImage.Offer):$($ARMImage.Sku):$($ARMImage.Version)"
+			Add-Content -Value "$($indents[5])^imageReference^ : " -Path $jsonFile
+			Add-Content -Value "$($indents[5]){" -Path $jsonFile
+				Add-Content -Value "$($indents[6])^publisher^: ^$publisher^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^offer^: ^$offer^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^sku^: ^$sku^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^version^: ^$version^" -Path $jsonFile
+			Add-Content -Value "$($indents[5])}," -Path $jsonFile
+		} elseif ($CurrentTestData.Publisher -and $CurrentTestData.Offer) {
+			Add-Content -Value "$($indents[5])^imageReference^ : " -Path $jsonFile
+			Add-Content -Value "$($indents[5]){" -Path $jsonFile
+			Add-Content -Value "$($indents[6])^publisher^: ^$publisher^," -Path $jsonFile
+			Add-Content -Value "$($indents[6])^offer^: ^$offer^," -Path $jsonFile
+			Add-Content -Value "$($indents[6])^sku^: ^$sku^," -Path $jsonFile
+			Add-Content -Value "$($indents[6])^version^: ^$version^" -Path $jsonFile
+			Add-Content -Value "$($indents[5])}," -Path $jsonFile
+		} elseif ( $UseManagedDisks -and $OsVHD ) {
+			Add-Content -Value "$($indents[5])^imageReference^ : " -Path $jsonFile
+			Add-Content -Value "$($indents[5]){" -Path $jsonFile
+			Add-Content -Value "$($indents[6])^id^: ^[resourceId('Microsoft.Compute/images', '$RGName-Image')]^," -Path $jsonFile
+			Add-Content -Value "$($indents[5])}," -Path $jsonFile
+		}
+
+		Add-Content -Value "$($indents[5])^osDisk^ : " -Path $jsonFile
+		Add-Content -Value "$($indents[5]){" -Path $jsonFile
+		if($osVHD) {
+			if ($UseManagedDisks) {
+				LogMsg ">>Using VHD : $osVHD (Converted to Managed Image)"
+				Add-Content -Value "$($indents[6])^osType^: ^Linux^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^name^: ^$vmName-OSDisk^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^managedDisk^: " -Path $jsonFile
+				Add-Content -Value "$($indents[6]){" -Path $jsonFile
+				Add-Content -Value "$($indents[7])^storageAccountType^: ^$StorageAccountType^" -Path $jsonFile
+
+				Add-Content -Value "$($indents[6])}," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^caching^: ^ReadWrite^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^createOption^: ^FromImage^" -Path $jsonFile
+			} else {
+				LogMsg ">>Using VHD : $osVHD"
+				Add-Content -Value "$($indents[6])^image^: " -Path $jsonFile
+				Add-Content -Value "$($indents[6]){" -Path $jsonFile
+				Add-Content -Value "$($indents[7])^uri^: ^[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/','$osVHD')]^" -Path $jsonFile
+				Add-Content -Value "$($indents[6])}," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^osType^: ^Linux^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^name^: ^$vmName-OSDisk^," -Path $jsonFile
+				#Add-Content -Value "$($indents[6])^osType^: ^Linux^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^vhd^: " -Path $jsonFile
+				Add-Content -Value "$($indents[6]){" -Path $jsonFile
+				Add-Content -Value "$($indents[7])^uri^: ^[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/','$vmName-$RGrandomWord-osdisk.vhd')]^" -Path $jsonFile
+				Add-Content -Value "$($indents[6])}," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^caching^: ^ReadWrite^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^createOption^: ^FromImage^" -Path $jsonFile
+			}
+		} else {
+			if ($UseManagedDisks) {
+				Add-Content -Value "$($indents[6])^name^: ^$vmName-OSDisk^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^createOption^: ^FromImage^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^managedDisk^: " -Path $jsonFile
+				Add-Content -Value "$($indents[6]){" -Path $jsonFile
+				Add-Content -Value "$($indents[7])^storageAccountType^: ^$StorageAccountType^" -Path $jsonFile
+				Add-Content -Value "$($indents[6])}" -Path $jsonFile
+				LogMsg "Added managed OS disk : $vmName-OSDisk"
+			} else {
+				Add-Content -Value "$($indents[6])^name^: ^$vmName-OSDisk^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^createOption^: ^FromImage^," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^vhd^: " -Path $jsonFile
+				Add-Content -Value "$($indents[6]){" -Path $jsonFile
+				Add-Content -Value "$($indents[7])^uri^: ^[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/','$vmName-$RGrandomWord-osdisk.vhd')]^" -Path $jsonFile
+				Add-Content -Value "$($indents[6])}," -Path $jsonFile
+				Add-Content -Value "$($indents[6])^caching^: ^ReadWrite^" -Path $jsonFile
+			}
+		}
+		Add-Content -Value "$($indents[5])}," -Path $jsonFile
+		$dataDiskAdded = $false
+		Add-Content -Value "$($indents[5])^dataDisks^ : " -Path $jsonFile
+		Add-Content -Value "$($indents[5])[" -Path $jsonFile
+		foreach ( $dataDisk in $newVM.DataDisk ) {
+			if ( $dataDisk.LUN -ge 0 ) {
+				if( $dataDiskAdded ) {
+					Add-Content -Value "$($indents[6])," -Path $jsonFile
+				}
+
+				if ($UseManagedDisks) {
+					Add-Content -Value "$($indents[6]){" -Path $jsonFile
+					Add-Content -Value "$($indents[7])^name^: ^$vmName-disk-lun-$($dataDisk.LUN)^," -Path $jsonFile
+					Add-Content -Value "$($indents[7])^diskSizeGB^: ^$($dataDisk.DiskSizeInGB)^," -Path $jsonFile
+					Add-Content -Value "$($indents[7])^lun^: ^$($dataDisk.LUN)^," -Path $jsonFile
+					Add-Content -Value "$($indents[7])^createOption^: ^Empty^," -Path $jsonFile
+					Add-Content -Value "$($indents[7])^caching^: ^$($dataDisk.HostCaching)^," -Path $jsonFile
+					Add-Content -Value "$($indents[7])^managedDisk^:" -Path $jsonFile
+					Add-Content -Value "$($indents[7]){" -Path $jsonFile
+					Add-Content -Value "$($indents[8])^storageAccountType^: ^$StorageAccountType^" -Path $jsonFile
+					Add-Content -Value "$($indents[7])}" -Path $jsonFile
+					Add-Content -Value "$($indents[6])}" -Path $jsonFile
+					LogMsg "Added managed $($dataDisk.DiskSizeInGB)GB Datadisk to $($dataDisk.LUN)."
+				} else {
+					Add-Content -Value "$($indents[6]){" -Path $jsonFile
+					Add-Content -Value "$($indents[7])^name^: ^$vmName-disk-lun-$($dataDisk.LUN)^," -Path $jsonFile
+					Add-Content -Value "$($indents[7])^diskSizeGB^: ^$($dataDisk.DiskSizeInGB)^," -Path $jsonFile
+					Add-Content -Value "$($indents[7])^lun^: ^$($dataDisk.LUN)^," -Path $jsonFile
+					Add-Content -Value "$($indents[7])^createOption^: ^Empty^," -Path $jsonFile
+					Add-Content -Value "$($indents[7])^caching^: ^$($dataDisk.HostCaching)^," -Path $jsonFile
+					Add-Content -Value "$($indents[7])^vhd^:" -Path $jsonFile
+					Add-Content -Value "$($indents[7]){" -Path $jsonFile
+					Add-Content -Value "$($indents[8])^uri^: ^[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/','$vmName-$RGrandomWord-disk-lun-$($dataDisk.LUN).vhd')]^" -Path $jsonFile
+					Add-Content -Value "$($indents[7])}" -Path $jsonFile
+					Add-Content -Value "$($indents[6])}" -Path $jsonFile
+					LogMsg "Added unmanaged $($dataDisk.DiskSizeInGB)GB Datadisk to $($dataDisk.LUN)."
+				}
+				$dataDiskAdded = $true
+			}
+		}
+		Add-Content -Value "$($indents[5])]" -Path $jsonFile
+		Add-Content -Value "$($indents[4])}" -Path $jsonFile
+		Add-Content -Value "$($indents[4])," -Path $jsonFile
+		#endregion
+
+		LogMsg "Added Virtual Machine $vmName"
+
+		#region Network Profile
+		Add-Content -Value "$($indents[4])^networkProfile^: " -Path $jsonFile
+		Add-Content -Value "$($indents[4]){" -Path $jsonFile
+		Add-Content -Value "$($indents[5])^networkInterfaces^: " -Path $jsonFile
+		Add-Content -Value "$($indents[5])[" -Path $jsonFile
+		#region configure multiple Nics to networkProfile
+		if($NicNameList) {
+			foreach($NicName in $NicNameList) {
+				Add-Content -Value "$($indents[6]){" -Path $jsonFile
+				Add-Content -Value "$($indents[7])^id^: ^[resourceId('Microsoft.Network/networkInterfaces','$NicName')]^," -Path $jsonFile
+				Add-Content -Value "$($indents[7])^properties^: { ^primary^: false }" -Path $jsonFile
+				Add-Content -Value "$($indents[6])}," -Path $jsonFile
+				LogMsg "Attached Network Interface Card `"$NicName`" to Virtual Machine `"$vmName`"."
+			}
+			Add-Content -Value "$($indents[6]){" -Path $jsonFile
+			Add-Content -Value "$($indents[7])^id^: ^[resourceId('Microsoft.Network/networkInterfaces','$NIC')]^," -Path $jsonFile
+			Add-Content -Value "$($indents[7])^properties^: { ^primary^: true }" -Path $jsonFile
+			Add-Content -Value "$($indents[6])}" -Path $jsonFile
+			LogMsg "Attached Network Interface Card `"$NIC`" to Virtual Machine `"$vmName`"."
+		} else {
+			Add-Content -Value "$($indents[6]){" -Path $jsonFile
+			Add-Content -Value "$($indents[7])^id^: ^[resourceId('Microsoft.Network/networkInterfaces','$NIC')]^" -Path $jsonFile
+			Add-Content -Value "$($indents[6])}" -Path $jsonFile
+		}
+		#endregion
+		Add-Content -Value "$($indents[5])]" -Path $jsonFile
+		Add-Content -Value "$($indents[4])}" -Path $jsonFile
+
+		#region Enable boot dignostics.
+		Add-Content -Value "$($indents[4])," -Path $jsonFile
+		Add-Content -Value "$($indents[4])^diagnosticsProfile^: " -Path $jsonFile
+		Add-Content -Value "$($indents[4]){" -Path $jsonFile
+		Add-Content -Value "$($indents[5])^bootDiagnostics^: " -Path $jsonFile
+		Add-Content -Value "$($indents[5]){" -Path $jsonFile
+		Add-Content -Value "$($indents[6])^enabled^: true," -Path $jsonFile
+		Add-Content -Value "$($indents[6])^storageUri^: ^[reference(resourceId('$diagnosticRG', 'Microsoft.Storage/storageAccounts', '$bootDiagnosticsSA'), '2015-06-15').primaryEndpoints['blob']]^" -Path $jsonFile
+		Add-Content -Value "$($indents[5])}" -Path $jsonFile
+		Add-Content -Value "$($indents[4])}" -Path $jsonFile
+		Add-Content -Value "$($indents[3])}" -Path $jsonFile
+		Add-Content -Value "$($indents[2])}" -Path $jsonFile
+		#endregion
+
+		$vmAdded = $true
+		$role  = $role + 1
+		$vmCount = $role
+	}
+	Add-Content -Value "$($indents[1])]" -Path $jsonFile
+	#endregion
+
+	Add-Content -Value "$($indents[0])}" -Path $jsonFile
+	Set-Content -Path $jsonFile -Value (Get-Content $jsonFile).Replace("^",'"') -Force
+	#endregion
 
 	LogMsg "Template generated successfully."
 	return $createSetupCommand,  $RGName, $vmCount
 }
 
-Function DeployResourceGroups ($xmlConfig, $setupType, $Distro, $getLogsIfFailed = $false, $GetDeploymentStatistics = $false, [string]$region = "")
-{
-	if( (!$EconomyMode) -or ( $EconomyMode -and ($xmlConfig.config.$TestPlatform.Deployment.$setupType.isDeployed -eq "NO")))
-	{
-		try
-		{
-
+Function DeployResourceGroups ($xmlConfig, $setupType, $Distro, $getLogsIfFailed = $false, $GetDeploymentStatistics = $false, [string]$region = "") {
+	if( (!$EconomyMode) -or ( $EconomyMode -and ($xmlConfig.config.$TestPlatform.Deployment.$setupType.isDeployed -eq "NO"))) {
+		try {
 			$VerifiedGroups =  $NULL
 			$retValue = $NULL
 			#$ExistingGroups = RetryOperation -operation { Get-AzureRmResourceGroup } -description "Getting information of existing resource groups.." -retryInterval 5 -maxRetryCount 5
@@ -1756,41 +1710,32 @@ Function DeployResourceGroups ($xmlConfig, $setupType, $Distro, $getLogsIfFailed
 			#$isAllVerified = "False"
 			$isAllConnected = "False"
 			#$isAllDeployed = @("True","ICA-RG-IEndpointSingleHS-U1510-8-10-12-34-9","30")
-			if($isAllDeployed[0] -eq "True")
-			{
+			if($isAllDeployed[0] -eq "True") {
 				$deployedGroups = $isAllDeployed[1]
 				#$resourceGroupCount = $isAllDeployed[2]
 				$DeploymentElapsedTime = $isAllDeployed[3]
 				$allVMData = GetAllDeployementData -ResourceGroups $deployedGroups
 				Set-Variable -Name allVMData -Value $allVMData -Force -Scope Global
 				$isAllConnected = isAllSSHPortsEnabledRG -AllVMDataObject $allVMData
-				if ($isAllConnected -eq "True")
-				{
+				if ($isAllConnected -eq "True") {
 					$VerifiedGroups = $deployedGroups
 					$retValue = $VerifiedGroups
 					#$vnetIsAllConfigured = $false
 					$xmlConfig.config.$TestPlatform.Deployment.$setupType.isDeployed = $retValue
 					#Collecting Initial Kernel
-					if ( Test-Path -Path .\Extras\UploadDeploymentDataToDB.ps1 )
-					{
+					if ( Test-Path -Path .\Extras\UploadDeploymentDataToDB.ps1 ) {
 						.\Extras\UploadDeploymentDataToDB.ps1 -allVMData $allVMData -DeploymentTime $DeploymentElapsedTime.TotalSeconds
 					}
 					GetAndCheckKernelLogs -allDeployedVMs $allVMData -status "Initial"
-				}
-				else
-				{
+				} else {
 					LogErr "Unable to connect Some/All SSH ports.."
 					$retValue = $NULL
 				}
-			}
-			else
-			{
+			} else {
 				LogErr "One or More Deployments are Failed..!"
 				$retValue = $NULL
 			}
-		}
-		catch
-		{
+		} catch {
 			LogMsg "Exception detected. Source : DeployVMs()"
 			$line = $_.InvocationInfo.ScriptLineNumber
 			$script_name = ($_.InvocationInfo.ScriptName).Replace($PWD,".")
@@ -1799,52 +1744,38 @@ Function DeployResourceGroups ($xmlConfig, $setupType, $Distro, $getLogsIfFailed
 			LogErr "Source : Line $line in script $script_name."
 			$retValue = $NULL
 		}
-	}
-	else
-	{
+	} else {
 		$retValue = $xmlConfig.config.$TestPlatform.Deployment.$setupType.isDeployed
 		GetAndCheckKernelLogs -allDeployedVMs $allVMData -status "Initial"
 	}
-	if ( $GetDeploymentStatistics )
-	{
+
+	if ( $GetDeploymentStatistics )	{
 		return $retValue, $DeploymentElapsedTime
-	}
-	else
-	{
+	} else {
 		return $retValue
 	}
 }
-
-Function isAllSSHPortsEnabledRG($AllVMDataObject)
-{
+Function isAllSSHPortsEnabledRG($AllVMDataObject) {
 	LogMsg "Trying to Connect to deployed VM(s)"
 	$timeout = 0
-	do
-	{
+	do {
 		$WaitingForConnect = 0
-		foreach ( $vm in $AllVMDataObject)
-		{
+		foreach ( $vm in $AllVMDataObject) {
 			$out = Test-TCP -testIP $($vm.PublicIP) -testport $($vm.SSHPort)
-			if ($out -ne "True")
-			{
+			if ($out -ne "True") {
 				LogMsg "Connecting to  $($vm.PublicIP) : $($vm.SSHPort) : Failed"
 				$WaitingForConnect = $WaitingForConnect + 1
-			}
-			else
-			{
+			} else {
 				LogMsg "Connecting to  $($vm.PublicIP) : $($vm.SSHPort) : Connected"
 			}
 		}
-		if($WaitingForConnect -gt 0)
-		{
+		if($WaitingForConnect -gt 0) {
 			$timeout = $timeout + 1
 			LogMsg "$WaitingForConnect VM(s) still awaiting to open SSH port.."
 			LogMsg "Retry $timeout/100"
 			Start-Sleep 3
 			$retValue = "False"
-		}
-		else
-		{
+		} else {
 			LogMsg "ALL VM's SSH port is/are open now.."
 			$retValue = "True"
 		}
@@ -1871,86 +1802,66 @@ Function isAllSSHPortsEnabledRG($AllVMDataObject)
 	return $retValue
 }
 
-Function CreateRGDeploymentWithTempParameters([string]$RGName, $TemplateFile, $TemplateParameterFile)
-{
+Function CreateRGDeploymentWithTempParameters([string]$RGName, $TemplateFile, $TemplateParameterFile) {
 	$FailCounter = 0
 	$retValue = "False"
 	$ResourceGroupDeploymentName = "eosg" + (Get-Date).Ticks
-	While(($retValue -eq $false) -and ($FailCounter -lt 1))
-	{
-		try
-		{
+	While(($retValue -eq $false) -and ($FailCounter -lt 1)) {
+		try {
 			$FailCounter++
 			LogMsg "Creating Deployment using $TemplateFile $TemplateParameterFile..."
 			$createRGDeployment = New-AzureRmResourceGroupDeployment -Name $ResourceGroupDeploymentName -ResourceGroupName $RGName -TemplateFile $TemplateFile -TemplateParameterFile $TemplateParameterFile -Verbose
 			$operationStatus = $createRGDeployment.ProvisioningState
-			if ($operationStatus  -eq "Succeeded")
-			{
+			if ($operationStatus  -eq "Succeeded") {
 				LogMsg "Resource Group Deployment Created."
 				$retValue = $true
-			}
-			else
-			{
+			} else {
 				LogErr "Failed to create Resource Group Deployment."
 				$retValue = $false
 			}
-		}
-		catch
-		{
+		} catch	{
 			$retValue = $false
 		}
 	}
 	return $retValue
 }
 
-Function CreateAllRGDeploymentsWithTempParameters($templateName, $location, $TemplateFile, $TemplateParameterFile)
-{
+Function CreateAllRGDeploymentsWithTempParameters($templateName, $location, $TemplateFile, $TemplateParameterFile) {
 	$resourceGroupCount = 0
 	$curtime = Get-Date
 	$isServiceDeployed = "False"
 	$retryDeployment = 0
 	$groupName = "ICA-RG-" + $templateName + "-" + $curtime.Month + "-" +  $curtime.Day  + "-" + $curtime.Hour + "-" + $curtime.Minute + "-" + $curtime.Second
 
-	while (($isServiceDeployed -eq "False") -and ($retryDeployment -lt 3))
-	{
+	while (($isServiceDeployed -eq "False") -and ($retryDeployment -lt 3)) {
 		LogMsg "Creating Resource Group : $groupName."
 		LogMsg "Verifying that Resource group name is not in use."
 		$isRGDeleted = DeleteResourceGroup -RGName $groupName
-		if ($isRGDeleted)
-		{
+		if ($isRGDeleted) {
 			$isServiceCreated = CreateResourceGroup -RGName $groupName -location $location
-			if ($isServiceCreated -eq "True")
-			{
+			if ($isServiceCreated -eq "True") {
 				$DeploymentStartTime = (Get-Date)
 				$CreateRGDeployments = CreateRGDeploymentWithTempParameters -RGName $groupName -location $location -TemplateFile $TemplateFile -TemplateParameterFile $TemplateParameterFile
 				$DeploymentEndTime = (Get-Date)
 				$DeploymentElapsedTime = $DeploymentEndTime - $DeploymentStartTime
-				if ( $CreateRGDeployments )
-				{
+				if ( $CreateRGDeployments ) {
 						$retValue = "True"
 						$isServiceDeployed = "True"
 						$resourceGroupCount = $resourceGroupCount + 1
 						$deployedGroups = $groupName
-
-				}
-				else
-				{
+				} else {
 					LogErr "Unable to Deploy one or more VM's"
 					$retryDeployment = $retryDeployment + 1
 					$retValue = "False"
 					$isServiceDeployed = "False"
 				}
-			}
-			else
-			{
+			} else {
 				LogErr "Unable to create $groupName"
 				$retryDeployment = $retryDeployment + 1
 				$retValue = "False"
 				$isServiceDeployed = "False"
 			}
-		}
-		else
-		{
+		} else {
 			LogErr "Unable to delete existing resource group - $groupName"
 			$retryDeployment = $retryDeployment + 1
 			$retValue = "False"
@@ -1960,20 +1871,16 @@ Function CreateAllRGDeploymentsWithTempParameters($templateName, $location, $Tem
 	return $retValue, $deployedGroups, $resourceGroupCount, $DeploymentElapsedTime
 }
 
-Function CopyVHDToAnotherStorageAccount ($sourceStorageAccount,$sourceStorageContainer,$destinationStorageAccount,$destinationStorageContainer,$vhdName,$destVHDName)
-{
+Function CopyVHDToAnotherStorageAccount ($sourceStorageAccount,$sourceStorageContainer,$destinationStorageAccount,$destinationStorageContainer,$vhdName,$destVHDName) {
 	$retValue = $false
-	if (!$destVHDName)
-	{
+	if (!$destVHDName) {
 		$destVHDName = $vhdName
 	}
 	$saInfoCollected = $false
 	$retryCount = 0
 	$maxRetryCount = 999
-	while(!$saInfoCollected -and ($retryCount -lt $maxRetryCount))
-	{
-		try
-		{
+	while(!$saInfoCollected -and ($retryCount -lt $maxRetryCount)) {
+		try	{
 			$retryCount += 1
 			LogMsg "[Attempt $retryCount/$maxRetryCount] : Getting Existing Storage Account details ..."
 			$GetAzureRmStorageAccount = $null
@@ -1983,9 +1890,7 @@ Function CopyVHDToAnotherStorageAccount ($sourceStorageAccount,$sourceStorageCon
 				throw
 			}
 			$saInfoCollected = $true
-		}
-		catch
-		{
+		} catch {
 			$saInfoCollected = $false
 			LogErr "Error in fetching Storage Account info. Retrying in 10 seconds."
 			Start-Sleep -Seconds 10
@@ -1997,7 +1902,6 @@ Function CopyVHDToAnotherStorageAccount ($sourceStorageAccount,$sourceStorageCon
 	[string]$SrcStorageAccount = $sourceStorageAccount
 	[string]$SrcStorageBlob = $vhdName
 	$SrcStorageContainer = $sourceStorageContainer
-
 
 	LogMsg "Retrieving $destinationStorageAccount storage account key"
 	$DestAccountKey= (Get-AzureRmStorageAccountKey -ResourceGroupName $(($GetAzureRmStorageAccount  | Where-Object {$_.StorageAccountName -eq "$destinationStorageAccount"}).ResourceGroupName) -Name $destinationStorageAccount)[0].Value
@@ -2012,8 +1916,7 @@ Function CopyVHDToAnotherStorageAccount ($sourceStorageAccount,$sourceStorageCon
 
 	$destContext = New-AzureStorageContext -StorageAccountName $destAccountName -StorageAccountKey $destAccountKey
 	$testContainer = Get-AzureStorageContainer -Name $destContainer -Context $destContext -ErrorAction Ignore
-	if ($null -eq $testContainer)
-	{
+	if ($null -eq $testContainer) {
 		New-AzureStorageContainer -Name $destContainer -context $destContext
 	}
 	# Start the Copy
@@ -2023,22 +1926,17 @@ Function CopyVHDToAnotherStorageAccount ($sourceStorageAccount,$sourceStorageCon
 	# Monitor replication status
 	#
 	$CopyingInProgress = $true
-	while($CopyingInProgress)
-	{
+	while($CopyingInProgress) {
 		$CopyingInProgress = $false
 		$status = Get-AzureStorageBlobCopyState -Container $destContainer -Blob $destBlob -Context $destContext
-		if ($status.Status -ne "Success")
-		{
+		if ($status.Status -ne "Success") {
 			$CopyingInProgress = $true
-		}
-		else
-		{
+		} else {
 			LogMsg "Copy $DestBlob --> $($destContext.StorageAccountName) : Done"
 			$retValue = $true
 
 		}
-		if ($CopyingInProgress)
-		{
+		if ($CopyingInProgress) {
 			$copyPercentage = [math]::Round( $(($status.BytesCopied * 100 / $status.TotalBytes)) , 2 )
 			LogMsg "Bytes Copied:$($status.BytesCopied), Total Bytes:$($status.TotalBytes) [ $copyPercentage % ]"
 			Start-Sleep -Seconds 10
@@ -2047,95 +1945,72 @@ Function CopyVHDToAnotherStorageAccount ($sourceStorageAccount,$sourceStorageCon
 	return $retValue
 }
 
-Function SetResourceGroupLock ([string]$ResourceGroup,  [string]$LockNote, [string]$LockName="ReproVM",  $LockType = "CanNotDelete")
-{
+Function SetResourceGroupLock ([string]$ResourceGroup,  [string]$LockNote, [string]$LockName="ReproVM",  $LockType = "CanNotDelete") {
 	$parameterErrors = 0
-	if ($null -eq $LockNote)
-	{
+	if ($null -eq $LockNote) {
 		LogErr "You did not provide -LockNote <string>. Please give a valid note."
 		$parameterErrors += 1
 	}
-	if ($null -eq $ResourceGroup)
-	{
+	if ($null -eq $ResourceGroup) {
 		LogErr "You did not provide -ResourceGroup <string>.."
 		$parameterErrors += 1
 	}
-	if ($parameterErrors -eq 0)
-	{
+	if ($parameterErrors -eq 0) {
 		LogMsg "Adding '$LockName' lock to '$ResourceGroup'"
 		$lock = Set-AzureRmResourceLock -LockName $LockName -LockLevel $LockType -LockNotes $LockNote -Force -ResourceGroupName $ResourceGroup
-		if ( $lock.Properties.level -eq $LockType)
-		{
+		if ( $lock.Properties.level -eq $LockType) {
 			LogMsg ">>>$ResourceGroup LOCKED<<<."
-		}
-		else
-		{
+		} else {
 			LogErr "Something went wrong. Please try again."
 		}
-	}
-	else
-	{
+	} else {
 		LogMsg "Fix the paremeters and try again."
 	}
 }
 
-Function RestartAllAzureDeployments($allVMData)
-{
+Function RestartAllAzureDeployments($allVMData) {
 	$currentGUID = ([guid]::newguid()).Guid
 	Save-AzureRmContext -Path "$env:TEMP\$($currentGUID).azurecontext" -Force
 	$restartJobs = @()
-	foreach ( $vmData in $AllVMData )
-	{
-		if ( $UseAzureResourceManager)
-		{
+	foreach ( $vmData in $AllVMData ) {
+		if ( $UseAzureResourceManager) {
 			LogMsg "Triggering Restart-$($vmData.RoleName)..."
 			$restartJobs += Start-Job -ScriptBlock { $vmData = $args[0]
 				$currentGUID = $args[1]
 				Import-AzureRmContext -AzureContext "$env:TEMP\$($currentGUID).azurecontext"
 				Restart-AzureRmVM -ResourceGroupName $vmData.ResourceGroupName -Name $vmData.RoleName -Verbose
 			} -ArgumentList $vmData,$currentGUID -Name "Restart-$($vmData.RoleName)"
-		}
-		else
-		{
+		} else {
 			Restart-AzureVM -ServiceName $vmData.ServiceName -Name $vmData.RoleName -Verbose
 			$isRestarted = $?
-			if ($isRestarted)
-			{
+			if ($isRestarted) {
 				LogMsg "Restarted : $($vmData.RoleName)"
-			}
-			else
-			{
+			} else {
 				LogError "FAILED TO RESTART : $($vmData.RoleName)"
 				$retryCount = $retryCount + 1
-				if ($retryCount -gt 0)
-				{
+				if ($retryCount -gt 0) {
 					LogMsg "Retrying..."
 				}
-				if ($retryCount -eq 0)
-				{
+				if ($retryCount -eq 0) {
 					Throw "Calling function - $($MyInvocation.MyCommand). Unable to Restart : $($vmData.RoleName)"
 				}
 			}
 		}
 	}
+
 	$recheckAgain = $true
 	LogMsg "Waiting until VMs restart..."
 	$jobCount = $restartJobs.Count
 	$completedJobsCount = 0
-	While ($recheckAgain)
-	{
+	While ($recheckAgain) {
 		$recheckAgain = $false
 		$tempJobs = @()
-		foreach ($restartJob in $restartJobs)
-		{
-			if ($restartJob.State -eq "Completed")
-			{
+		foreach ($restartJob in $restartJobs) {
+			if ($restartJob.State -eq "Completed") {
 				$completedJobsCount += 1
 				LogMsg "[$completedJobsCount/$jobCount] $($restartJob.Name) is done."
 				Remove-Job -Id $restartJob.ID -Force -ErrorAction SilentlyContinue
-			}
-			else
-			{
+			} else {
 				$tempJobs += $restartJob
 				$recheckAgain = $true
 			}
