@@ -10,8 +10,8 @@
 
 
 .NOTES
-	Creation Date:  
-	Purpose/Change: 
+	Creation Date:
+	Purpose/Change:
 
 #>
 ###############################################################################################
@@ -38,7 +38,7 @@ function LogVerbose () {
 		}
 		$now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
 		if ( $VerboseCommand ) {
-			Write-Verbose "$now : $text" -Verbose       
+			Write-Verbose "$now : $text" -Verbose
 		}
 	} catch {
 		ThrowException($_)
@@ -59,7 +59,7 @@ function Write-Log() {
 		$now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
 		$logType = $logLevel.PadRight(5, ' ')
 		$finalMessage = "$now : [$logType] $text"
-		
+
 		$fgColor = "White"
 		switch ($logLevel) {
 			"INFO"	{$fgColor = "White"; continue}
@@ -67,7 +67,7 @@ function Write-Log() {
 			"ERROR"	{$fgColor = "Red"; continue}
 		}
 		Write-Output $finalMessage -ForegroundColor $fgColor
-		
+
 		$logFolder = ""
 		$logFile = "Logs.txt"
 		if ($LogDir) {
@@ -78,7 +78,7 @@ function Write-Log() {
 			$logFolder = $CurrentTestLogDir
 			$logFile = "CurrentTestLogs.txt"
 		}
-		
+
 		if ( !(Test-Path "$logFolder\$logFile" ) ) {
 			if (!(Test-Path $logFolder) ) {
 				New-Item -ItemType Directory -Force -Path $logFolder | Out-Null
@@ -117,7 +117,8 @@ Function ValidateXmlFiles( [string]$ParentFolder ) {
 		try {
 			$TempXml = [xml](Get-Content $file.FullName)
 			LogVerbose -text "$($file.FullName) validation successful."
-			
+			Clear-Variable TempXml
+
 		} catch {
 			LogError -text "$($file.FullName) validation failed."
 			$xmlErrorFiles += $file.FullName
@@ -130,79 +131,62 @@ Function ValidateXmlFiles( [string]$ParentFolder ) {
 	}
 }
 
-Function ProvisionVMsForLisa($allVMData, $installPackagesOnRoleNames)
-{
+Function ProvisionVMsForLisa($allVMData, $installPackagesOnRoleNames) {
 	$keysGenerated = $false
-	foreach ( $vmData in $allVMData )
-	{
+	foreach ( $vmData in $allVMData ) {
 		LogMsg "Configuring $($vmData.RoleName) for LISA test..."
 		RemoteCopy -uploadTo $vmData.PublicIP -port $vmData.SSHPort -files ".\Testscripts\Linux\enableRoot.sh,.\Testscripts\Linux\enablePasswordLessRoot.sh,.\Testscripts\Linux\provisionLinuxForLisa.sh" -username $user -password $password -upload
-		$out = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "chmod +x /home/$user/*.sh" -runAsSudo			
+		$out = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "chmod +x /home/$user/*.sh" -runAsSudo
 		LogMsg "Return value of RunLinuxCmd: $out"
 		$rootPasswordSet = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "/home/$user/enableRoot.sh -password $($password.Replace('"',''))" -runAsSudo
 		LogMsg $rootPasswordSet
-		if (( $rootPasswordSet -imatch "ROOT_PASSWRD_SET" ) -and ( $rootPasswordSet -imatch "SSHD_RESTART_SUCCESSFUL" ))
-		{
+
+		if (( $rootPasswordSet -imatch "ROOT_PASSWRD_SET" ) -and ( $rootPasswordSet -imatch "SSHD_RESTART_SUCCESSFUL" )) {
 			LogMsg "root user enabled for $($vmData.RoleName) and password set to $password"
-		}
-		else
-		{
+		} else {
 			Throw "Failed to enable root password / starting SSHD service. Please check logs. Aborting test."
 		}
+
 		$out = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "cp -ar /home/$user/*.sh ."
 		LogMsg "Return value of RunLinuxCmd: $out"
 
-		if ( $keysGenerated )
-		{
+		if ( $keysGenerated ) {
 			RemoteCopy -uploadTo $vmData.PublicIP -port $vmData.SSHPort -files ".\$LogDir\sshFix.tar" -username "root" -password $password -upload
-			$keyCopyOut = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "./enablePasswordLessRoot.sh" 
+			$keyCopyOut = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "./enablePasswordLessRoot.sh"
 			LogMsg $keyCopyOut
-			if ( $keyCopyOut -imatch "KEY_COPIED_SUCCESSFULLY" )
-			{
+			if ( $keyCopyOut -imatch "KEY_COPIED_SUCCESSFULLY" ) {
 				$keysGenerated = $true
 				LogMsg "SSH keys copied to $($vmData.RoleName)"
 				$md5sumCopy = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "md5sum .ssh/id_rsa"
-				if ( $md5sumGen -eq $md5sumCopy )
-				{ 
+				if ( $md5sumGen -eq $md5sumCopy ) {
 					LogMsg "md5sum check success for .ssh/id_rsa."
-				}
-				else
-				{
+				} else {
 					Throw "md5sum check failed for .ssh/id_rsa. Aborting test."
 				}
-			}
-			else
-			{
+			} else {
 				Throw "Error in copying SSH key to $($vmData.RoleName)"
 			}
-		}
-		else
-		{
-			$out = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "rm -rf /root/sshFix*" 
+		} else {
+			$out = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "rm -rf /root/sshFix*"
 			LogMsg "Return value of RunLinuxCmd: $out"
-			$keyGenOut = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "./enablePasswordLessRoot.sh" 
+			$keyGenOut = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "./enablePasswordLessRoot.sh"
 			LogMsg $keyGenOut
-			if ( $keyGenOut -imatch "KEY_GENERATED_SUCCESSFULLY" )
-			{
+
+			if ( $keyGenOut -imatch "KEY_GENERATED_SUCCESSFULLY" ) {
 				$keysGenerated = $true
 				LogMsg "SSH keys generated in $($vmData.RoleName)"
 				RemoteCopy -download -downloadFrom $vmData.PublicIP -port $vmData.SSHPort  -files "/root/sshFix.tar" -username "root" -password $password -downloadTo $LogDir
 				$md5sumGen = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "md5sum .ssh/id_rsa"
-			}
-			else
-			{
+			} else {
 				Throw "Error in generating SSH key in $($vmData.RoleName)"
 			}
 		}
 	}
-	
+
 	$packageInstallJobs = @()
-	foreach ( $vmData in $allVMData )
-	{
-		if ( $installPackagesOnRoleNames )
-		{
-			if ( $installPackagesOnRoleNames -imatch $vmData.RoleName )
-			{
+	foreach ( $vmData in $allVMData ) {
+		if ( $installPackagesOnRoleNames ) {
+			if ( $installPackagesOnRoleNames -imatch $vmData.RoleName )	{
 				LogMsg "Executing $scriptName ..."
 				$jobID = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "/root/$scriptName" -RunInBackground
 				$packageInstallObj = New-Object PSObject
@@ -212,14 +196,10 @@ Function ProvisionVMsForLisa($allVMData, $installPackagesOnRoleNames)
 				Add-member -InputObject $packageInstallObj -MemberType NoteProperty -Name SSHPort -Value $vmData.SSHPort
 				$packageInstallJobs += $packageInstallObj
 				#endregion
-			}
-			else
-			{
+			} else {
 				LogMsg "$($vmData.RoleName) is set to NOT install packages. Hence skipping package installation on this VM."
 			}
-		}
-		else
-		{
+		} else {
 			LogMsg "Executing $scriptName ..."
 			$jobID = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "/root/$scriptName" -RunInBackground
 			$packageInstallObj = New-Object PSObject
@@ -229,70 +209,62 @@ Function ProvisionVMsForLisa($allVMData, $installPackagesOnRoleNames)
 			Add-member -InputObject $packageInstallObj -MemberType NoteProperty -Name SSHPort -Value $vmData.SSHPort
 			$packageInstallJobs += $packageInstallObj
 			#endregion
-		}		
+		}
 	}
-	
+
 	$packageInstallJobsRunning = $true
-	while ($packageInstallJobsRunning)
-	{
+	while ($packageInstallJobsRunning) {
 		$packageInstallJobsRunning = $false
-		foreach ( $job in $packageInstallJobs )
-		{
-			if ( (Get-Job -Id $($job.ID)).State -eq "Running" )
-			{
+		foreach ( $job in $packageInstallJobs ) {
+			if ( (Get-Job -Id $($job.ID)).State -eq "Running" ) {
 				$currentStatus = RunLinuxCmd -ip $job.PublicIP -port $job.SSHPort -username "root" -password $password -command "tail -n 1 /root/provisionLinux.log"
 				LogMsg "Package Installation Status for $($job.RoleName) : $currentStatus"
 				$packageInstallJobsRunning = $true
-			}
-			else
-			{
+			} else {
 				RemoteCopy -download -downloadFrom $job.PublicIP -port $job.SSHPort -files "/root/provisionLinux.log" -username "root" -password $password -downloadTo $LogDir
 				Rename-Item -Path "$LogDir\provisionLinux.log" -NewName "$($job.RoleName)-provisionLinux.log" -Force | Out-Null
 			}
 		}
-		if ( $packageInstallJobsRunning )
-		{
+
+		if ( $packageInstallJobsRunning ) {
 			WaitFor -seconds 10
 		}
 	}
 }
 
-function InstallCustomKernel ($CustomKernel, $allVMData, [switch]$RestartAfterUpgrade)
-{
-	try
-	{
+function InstallCustomKernel ($CustomKernel, $allVMData, [switch]$RestartAfterUpgrade) {
+	try	{
 		$currentKernelVersion = ""
 		$upgradedKernelVersion = ""
 		$CustomKernel = $CustomKernel.Trim()
 		if( ($CustomKernel -ne "ppa") -and ($CustomKernel -ne "linuxnext") -and `
 		($CustomKernel -ne "netnext") -and ($CustomKernel -ne "proposed") -and `
 		($CustomKernel -ne "latest") -and !($CustomKernel.EndsWith(".deb"))  -and `
-		!($CustomKernel.EndsWith(".rpm")) )
-		{
+		!($CustomKernel.EndsWith(".rpm")) ) {
 			LogErr "Only linuxnext, netnext, proposed, latest are supported. E.g. -CustomKernel linuxnext/netnext/proposed. Or use -CustomKernel <link to deb file>, -CustomKernel <link to rpm file>"
-		}
-		else
-		{
+		} else {
 			$scriptName = "customKernelInstall.sh"
 			$jobCount = 0
 			$kernelSuccess = 0
 			$packageInstallJobs = @()
-			foreach ( $vmData in $allVMData )
-			{
+			foreach ( $vmData in $allVMData ) {
 				RemoteCopy -uploadTo $vmData.PublicIP -port $vmData.SSHPort -files ".\Testscripts\Linux\$scriptName,.\Testscripts\Linux\DetectLinuxDistro.sh" -username $user -password $password -upload
-				if ( $CustomKernel.StartsWith("localfile:"))
-				{
+				if ( $CustomKernel.StartsWith("localfile:")) {
 					$customKernelFilePath = $CustomKernel.Replace('localfile:','')
-					RemoteCopy -uploadTo $vmData.PublicIP -port $vmData.SSHPort -files ".\$customKernelFilePath" -username $user -password $password -upload                    
+					RemoteCopy -uploadTo $vmData.PublicIP -port $vmData.SSHPort -files ".\$customKernelFilePath" -username $user -password $password -upload
 				}
+
 				RemoteCopy -uploadTo $vmData.PublicIP -port $vmData.SSHPort -files ".\Testscripts\Linux\$scriptName,.\Testscripts\Linux\DetectLinuxDistro.sh" -username $user -password $password -upload
 
 				$out = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "chmod +x *.sh" -runAsSudo
 				LogMsg "Return value of RunLinuxCmd: $out"
+
 				$currentKernelVersion = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "uname -r"
 				LogMsg "Executing $scriptName ..."
+
 				$jobID = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "/home/$user/$scriptName -CustomKernel $CustomKernel -logFolder /home/$user" -RunInBackground -runAsSudo
 				$packageInstallObj = New-Object PSObject
+
 				Add-member -InputObject $packageInstallObj -MemberType NoteProperty -Name ID -Value $jobID
 				Add-member -InputObject $packageInstallObj -MemberType NoteProperty -Name RoleName -Value $vmData.RoleName
 				Add-member -InputObject $packageInstallObj -MemberType NoteProperty -Name PublicIP -Value $vmData.PublicIP
@@ -301,122 +273,98 @@ function InstallCustomKernel ($CustomKernel, $allVMData, [switch]$RestartAfterUp
 				$jobCount += 1
 				#endregion
 			}
-	
+
 			$packageInstallJobsRunning = $true
-			while ($packageInstallJobsRunning)
-			{
+			while ($packageInstallJobsRunning) {
 				$packageInstallJobsRunning = $false
-				foreach ( $job in $packageInstallJobs )
-				{
-					if ( (Get-Job -Id $($job.ID)).State -eq "Running" )
-					{
+				foreach ( $job in $packageInstallJobs ) {
+					if ( (Get-Job -Id $($job.ID)).State -eq "Running" ) {
 						$currentStatus = RunLinuxCmd -ip $job.PublicIP -port $job.SSHPort -username $user -password $password -command "tail -n 1 build-CustomKernel.txt"
 						LogMsg "Package Installation Status for $($job.RoleName) : $currentStatus"
 						$packageInstallJobsRunning = $true
-					}
-					else
-					{
-						if ( !(Test-Path -Path "$LogDir\$($job.RoleName)-build-CustomKernel.txt" ) )
-						{
+					} else {
+						if ( !(Test-Path -Path "$LogDir\$($job.RoleName)-build-CustomKernel.txt" ) ) {
 							RemoteCopy -download -downloadFrom $job.PublicIP -port $job.SSHPort -files "build-CustomKernel.txt" -username $user -password $password -downloadTo $LogDir
-							if ( ( Get-Content "$LogDir\build-CustomKernel.txt" ) -imatch "CUSTOM_KERNEL_SUCCESS" )
-							{
+							if ( ( Get-Content "$LogDir\build-CustomKernel.txt" ) -imatch "CUSTOM_KERNEL_SUCCESS" ) {
 								$kernelSuccess += 1
 							}
 							Rename-Item -Path "$LogDir\build-CustomKernel.txt" -NewName "$($job.RoleName)-build-CustomKernel.txt" -Force | Out-Null
 						}
 					}
 				}
-				if ( $packageInstallJobsRunning )
-				{
+
+				if ( $packageInstallJobsRunning ) {
 					WaitFor -seconds 10
 				}
 			}
-			if ( $kernelSuccess -eq $jobCount )
-			{
+
+			if ( $kernelSuccess -eq $jobCount ) {
 				LogMsg "Kernel upgraded to `"$CustomKernel`" successfully in $($allVMData.Count) VM(s)."
-				if ( $RestartAfterUpgrade )
-				{
+				if ( $RestartAfterUpgrade ) {
 					LogMsg "Now restarting VMs..."
 					$restartStatus = RestartAllDeployments -allVMData $allVMData
-					if ( $restartStatus -eq "True")
-					{
+					if ( $restartStatus -eq "True") {
 						$retryAttempts = 5
 						$isKernelUpgraded = $false
-						while ( !$isKernelUpgraded -and ($retryAttempts -gt 0) )
-						{
+						while ( !$isKernelUpgraded -and ($retryAttempts -gt 0) ) {
 							$retryAttempts -= 1
 							$upgradedKernelVersion = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "uname -r"
 							LogMsg "Old kernel: $currentKernelVersion"
 							LogMsg "New kernel: $upgradedKernelVersion"
-							if ($currentKernelVersion -eq $upgradedKernelVersion)
-							{
+							if ($currentKernelVersion -eq $upgradedKernelVersion) {
 								LogErr "Kernel version is same after restarting VMs."
-								if ( ($CustomKernel -eq "latest") -or ($CustomKernel -eq "ppa") -or ($CustomKernel -eq "proposed") ) 
-								{
+								if ( ($CustomKernel -eq "latest") -or ($CustomKernel -eq "ppa") -or ($CustomKernel -eq "proposed") ) {
 									LogMsg "Continuing the tests as default kernel is same as $CustomKernel."
 									$isKernelUpgraded = $true
-								}
-								else
-								{
+								} else {
 									$isKernelUpgraded = $false
 								}
-							}
-							else
-							{
+							} else {
 								$isKernelUpgraded = $true
 							}
 							Add-Content -Value "Old kernel: $currentKernelVersion" -Path .\report\AdditionalInfo.html -Force
 							Add-Content -Value "New kernel: $upgradedKernelVersion" -Path .\report\AdditionalInfo.html -Force
 							return $isKernelUpgraded
 						}
-					}
-					else
-					{
+					} else {
 						return $false
 					}
 				}
 				return $true
-			}
-			else
-			{
+			} else {
 				LogErr "Kernel upgrade failed in $($jobCount-$kernelSuccess) VMs."
 				return $false
 			}
 		}
-	}
-	catch
-	{
+	} catch {
 		LogErr "Exception in InstallCustomKernel."
 		return $false
 	}
 }
 
-function InstallcustomLIS ($CustomLIS, $customLISBranch, $allVMData, [switch]$RestartAfterUpgrade)
-{
-	try
-	{
+function InstallcustomLIS ($CustomLIS, $customLISBranch, $allVMData, [switch]$RestartAfterUpgrade) {
+	try {
 		$CustomLIS = $CustomLIS.Trim()
-		if( ($CustomLIS -ne "lisnext") -and !($CustomLIS.EndsWith("tar.gz")))
-		{
+		if( ($CustomLIS -ne "lisnext") -and !($CustomLIS.EndsWith("tar.gz"))) {
 			LogErr "Only lisnext and *.tar.gz links are supported. Use -CustomLIS lisnext -LISbranch <branch name>. Or use -CustomLIS <link to tar.gz file>"
-		}
-		else
-		{
+		} else {
 			ProvisionVMsForLisa -allVMData $allVMData -installPackagesOnRoleNames none
 			$scriptName = "customLISInstall.sh"
 			$jobCount = 0
 			$lisSuccess = 0
 			$packageInstallJobs = @()
-			foreach ( $vmData in $allVMData )
-			{
+			foreach ( $vmData in $allVMData ) {
 				RemoteCopy -uploadTo $vmData.PublicIP -port $vmData.SSHPort -files ".\Testscripts\Linux\$scriptName,.\Testscripts\Linux\DetectLinuxDistro.sh" -username "root" -password $password -upload
+
 				$out = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "chmod +x *.sh" -runAsSudo
 				LogMsg "Return value of RunLinuxCmd: $out"
+
 				$currentlisVersion = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "modinfo hv_vmbus"
 				LogMsg "Executing $scriptName ..."
+
 				$jobID = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "/root/$scriptName -CustomLIS $CustomLIS -LISbranch $customLISBranch" -RunInBackground -runAsSudo
 				$packageInstallObj = New-Object PSObject
+
 				Add-member -InputObject $packageInstallObj -MemberType NoteProperty -Name ID -Value $jobID
 				Add-member -InputObject $packageInstallObj -MemberType NoteProperty -Name RoleName -Value $vmData.RoleName
 				Add-member -InputObject $packageInstallObj -MemberType NoteProperty -Name PublicIP -Value $vmData.PublicIP
@@ -425,90 +373,70 @@ function InstallcustomLIS ($CustomLIS, $customLISBranch, $allVMData, [switch]$Re
 				$jobCount += 1
 				#endregion
 			}
-	
+
 			$packageInstallJobsRunning = $true
-			while ($packageInstallJobsRunning)
-			{
+			while ($packageInstallJobsRunning) {
 				$packageInstallJobsRunning = $false
-				foreach ( $job in $packageInstallJobs )
-				{
-					if ( (Get-Job -Id $($job.ID)).State -eq "Running" )
-					{
+				foreach ( $job in $packageInstallJobs ) {
+					if ( (Get-Job -Id $($job.ID)).State -eq "Running" ) {
 						$currentStatus = RunLinuxCmd -ip $job.PublicIP -port $job.SSHPort -username "root" -password $password -command "tail -n 1 build-CustomLIS.txt"
 						LogMsg "Package Installation Status for $($job.RoleName) : $currentStatus"
 						$packageInstallJobsRunning = $true
-					}
-					else
-					{
-						if ( !(Test-Path -Path "$LogDir\$($job.RoleName)-build-CustomLIS.txt" ) )
-						{
+					} else {
+						if ( !(Test-Path -Path "$LogDir\$($job.RoleName)-build-CustomLIS.txt" ) ) {
 							RemoteCopy -download -downloadFrom $job.PublicIP -port $job.SSHPort -files "build-CustomLIS.txt" -username "root" -password $password -downloadTo $LogDir
-							if ( ( Get-Content "$LogDir\build-CustomLIS.txt" ) -imatch "CUSTOM_LIS_SUCCESS" )
-							{
+							if ( ( Get-Content "$LogDir\build-CustomLIS.txt" ) -imatch "CUSTOM_LIS_SUCCESS" ) {
 								$lisSuccess += 1
 							}
 							Rename-Item -Path "$LogDir\build-CustomLIS.txt" -NewName "$($job.RoleName)-build-CustomLIS.txt" -Force | Out-Null
 						}
 					}
 				}
-				if ( $packageInstallJobsRunning )
-				{
+
+				if ( $packageInstallJobsRunning ) {
 					WaitFor -seconds 10
 				}
 			}
-	
-			if ( $lisSuccess -eq $jobCount )
-			{
+
+			if ( $lisSuccess -eq $jobCount ) {
 				LogMsg "lis upgraded to `"$CustomLIS`" successfully in all VMs."
-				if ( $RestartAfterUpgrade )
-				{
+				if ( $RestartAfterUpgrade ) {
 					LogMsg "Now restarting VMs..."
 					$restartStatus = RestartAllDeployments -allVMData $allVMData
-					if ( $restartStatus -eq "True")
-					{
+					if ( $restartStatus -eq "True") {
 						$upgradedlisVersion = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username "root" -password $password -command "modinfo hv_vmbus"
 						LogMsg "Old lis: $currentlisVersion"
 						LogMsg "New lis: $upgradedlisVersion"
+
 						Add-Content -Value "Old lis: $currentlisVersion" -Path .\report\AdditionalInfo.html -Force
 						Add-Content -Value "New lis: $upgradedlisVersion" -Path .\report\AdditionalInfo.html -Force
 						return $true
-					}
-					else
-					{
+					} else {
 						return $false
 					}
 				}
 				return $true
-			}
-			else
-			{
+			} else {
 				LogErr "lis upgrade failed in $($jobCount-$lisSuccess) VMs."
 				return $false
 			}
 		}
-	}
-	catch
-	{
+	} catch {
 		LogErr "Exception in InstallcustomLIS."
 		return $false
 	}
 }
 
-function VerifyMellanoxAdapter($vmData)
-{
+function VerifyMellanoxAdapter($vmData) {
 	$maxRetryAttemps = 50
 	$retryAttempts = 1
 	$mellanoxAdapterDetected = $false
-	while ( !$mellanoxAdapterDetected -and ($retryAttempts -lt $maxRetryAttemps))
-	{
+	while ( !$mellanoxAdapterDetected -and ($retryAttempts -lt $maxRetryAttemps)) {
 		$pciDevices = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "lspci" -runAsSudo
-		if ( $pciDevices -imatch "Mellanox")
-		{
+		if ( $pciDevices -imatch "Mellanox") {
 			LogMsg "[Attempt $retryAttempts/$maxRetryAttemps] Mellanox Adapter detected in $($vmData.RoleName)."
 			$mellanoxAdapterDetected = $true
-		}
-		else
-		{
+		} else {
 			LogErr "[Attempt $retryAttempts/$maxRetryAttemps] Mellanox Adapter NOT detected in $($vmData.RoleName)."
 			$retryAttempts += 1
 		}
@@ -516,12 +444,9 @@ function VerifyMellanoxAdapter($vmData)
 	return $mellanoxAdapterDetected
 }
 
-function EnableSRIOVInAllVMs($allVMData)
-{
-	try
-	{
-		if( $EnableAcceleratedNetworking)
-		{
+function EnableSRIOVInAllVMs($allVMData) {
+	try	{
+		if( $EnableAcceleratedNetworking) {
 			$scriptName = "ConfigureSRIOV.sh"
 			#$jobCount = 0
 			#$kernelSuccess = 0
@@ -529,206 +454,142 @@ function EnableSRIOVInAllVMs($allVMData)
 			$sriovDetectedCount = 0
 			$vmCount = 0
 
-			foreach ( $vmData in $allVMData )
-			{
-				$vmCount += 1 
+			foreach ( $vmData in $allVMData ) {
+				$vmCount += 1
 				$currentMellanoxStatus = VerifyMellanoxAdapter -vmData $vmData
-				if ( $currentMellanoxStatus )
-				{
+				if ( $currentMellanoxStatus ) {
 					LogMsg "Mellanox Adapter detected in $($vmData.RoleName)."
 					RemoteCopy -uploadTo $vmData.PublicIP -port $vmData.SSHPort -files ".\Testscripts\Linux\$scriptName" -username $user -password $password -upload
-					$out = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "chmod +x *.sh" -runAsSudo                    
+
+					$out = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "chmod +x *.sh" -runAsSudo
 					LogMsg "Return value of RunLinuxCmd: $out"
+
 					$sriovOutput = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "/home/$user/$scriptName" -runAsSudo
 					$sriovDetectedCount += 1
-				}
-				else
-				{
+				} else {
 					LogErr "Mellanox Adapter not detected in $($vmData.RoleName)."
 				}
 				#endregion
 			}
 
-			if ($sriovDetectedCount -gt 0)
-			{
-				if ($sriovOutput -imatch "SYSTEM_RESTART_REQUIRED")
-				{
+			if ($sriovDetectedCount -gt 0) {
+				if ($sriovOutput -imatch "SYSTEM_RESTART_REQUIRED") {
 					LogMsg "Updated SRIOV configuration. Now restarting VMs..."
 					$restartStatus = RestartAllDeployments -allVMData $allVMData
 				}
-				if ($sriovOutput -imatch "DATAPATH_SWITCHED_TO_VF")
-				{
+				if ($sriovOutput -imatch "DATAPATH_SWITCHED_TO_VF") {
 					$restartStatus="True"
 				}
 			}
 			$vmCount = 0
 			$bondSuccess = 0
 			$bondError = 0
-			if ( $restartStatus -eq "True")
-			{
-				foreach ( $vmData in $allVMData )
-				{
+			if ( $restartStatus -eq "True")	{
+				foreach ( $vmData in $allVMData ) {
 					$vmCount += 1
-					if ($sriovOutput -imatch "DATAPATH_SWITCHED_TO_VF")
-					{
+					if ($sriovOutput -imatch "DATAPATH_SWITCHED_TO_VF") {
 						$AfterIfConfigStatus = $null
 						$AfterIfConfigStatus = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "dmesg" -runMaxAllowedTime 30 -runAsSudo
-						if ($AfterIfConfigStatus -imatch "Data path switched to VF")
-						{
+						if ($AfterIfConfigStatus -imatch "Data path switched to VF") {
 							LogMsg "Data path already switched to VF in $($vmData.RoleName)"
 							$bondSuccess += 1
-						}
-						else
-						{
+						} else {
 							LogErr "Data path not switched to VF in $($vmData.RoleName)"
 							$bondError += 1
 						}
-					}
-					else
-					{
+					} else {
 						$AfterIfConfigStatus = $null
 						$AfterIfConfigStatus = RunLinuxCmd -ip $vmData.PublicIP -port $vmData.SSHPort -username $user -password $password -command "/sbin/ifconfig -a" -runAsSudo
-						if ($AfterIfConfigStatus -imatch "bond")
-						{
+						if ($AfterIfConfigStatus -imatch "bond") {
 							LogMsg "New bond detected in $($vmData.RoleName)"
 							$bondSuccess += 1
-						}
-						else
-						{
+						} else {
 							LogErr "New bond not detected in $($vmData.RoleName)"
-							$bondError += 1 
+							$bondError += 1
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				return $false
 			}
-			if ($vmCount -eq $bondSuccess)
-			{
+
+			if ($vmCount -eq $bondSuccess) {
 				return $true
-			}
-			else
-			{
+			} else {
 				return $false
 			}
-		}
-		else
-		{
+		} else {
 			return $true
 		}
-	}
-	catch
-	{
+	} catch {
 		$line = $_.InvocationInfo.ScriptLineNumber
 		$script_name = ($_.InvocationInfo.ScriptName).Replace($PWD,".")
 		$ErrorMessage =  $_.Exception.Message
 		LogErr "EXCEPTION : $ErrorMessage"
-		LogErr "Source : Line $line in script $script_name." 
+		LogErr "Source : Line $line in script $script_name."
 		return $false
 	}
 }
 
-Function DetectLinuxDistro($VIP, $SSHport, $testVMUser, $testVMPassword)
-{
-	if ( !$detectedDistro )
-	{
+Function DetectLinuxDistro($VIP, $SSHport, $testVMUser, $testVMPassword) {
+	if ( !$detectedDistro )	{
 		$tempout = RemoteCopy  -upload -uploadTo $VIP -port $SSHport -files ".\Testscripts\Linux\DetectLinuxDistro.sh" -username $testVMUser -password $testVMPassword 2>&1 | Out-Null
 		LogMsg "Return value of RemoteCopy: $tempout"
+
 		$tempout = RunLinuxCmd -username $testVMUser -password $testVMPassword -ip $VIP -port $SSHport -command "chmod +x *.sh" -runAsSudo 2>&1 | Out-Null
 		LogMsg "Return value of RunLinuxCmd: $tempout"
 		$DistroName = RunLinuxCmd -username $testVMUser -password $testVMPassword -ip $VIP -port $SSHport -command "/home/$user/DetectLinuxDistro.sh" -runAsSudo
-		if(($DistroName -imatch "Unknown") -or (!$DistroName))
-		{
+
+		if(($DistroName -imatch "Unknown") -or (!$DistroName)) {
 			LogError "Linux distro detected : $DistroName"
 			Throw "Calling function - $($MyInvocation.MyCommand). Unable to detect distro."
-		}
-		else
-		{
-			if ($DistroName -imatch "UBUNTU")
-			{
-				$CleanedDistroName = "UBUNTU" 
-			}
-			elseif ($DistroName -imatch "DEBIAN")
-			{
+		} else {
+			if ($DistroName -imatch "UBUNTU") {
+				$CleanedDistroName = "UBUNTU"
+			} elseif ($DistroName -imatch "DEBIAN")	{
 				$CleanedDistroName = "DEBIAN"
-			}
-			elseif ($DistroName -imatch "CENTOS")
-			{
+			} elseif ($DistroName -imatch "CENTOS") {
 				$CleanedDistroName = "CENTOS"
-			}
-			elseif ($DistroName -imatch "SLES")
-			{
+			} elseif ($DistroName -imatch "SLES") {
 				$CleanedDistroName = "SLES"
-			}
-			elseif ($DistroName -imatch "SUSE")
-			{
+			} elseif ($DistroName -imatch "SUSE") {
 				$CleanedDistroName = "SUSE"
-			}
-			elseif ($DistroName -imatch "ORACLELINUX")
-			{
+			} elseif ($DistroName -imatch "ORACLELINUX") {
 				$CleanedDistroName = "ORACLELINUX"
-			}
-			elseif ($DistroName -imatch "REDHAT")
-			{
+			} elseif ($DistroName -imatch "REDHAT") {
 				$CleanedDistroName = "REDHAT"
-			}
-			elseif ($DistroName -imatch "FEDORA")
-			{
+			} elseif ($DistroName -imatch "FEDORA") {
 				$CleanedDistroName = "FEDORA"
-			}
-			elseif ($DistroName -imatch "COREOS")
-			{
+			} elseif ($DistroName -imatch "COREOS") {
 				$CleanedDistroName = "COREOS"
-			}
-			elseif ($DistroName -imatch "CLEARLINUX")
-			{
+			} elseif ($DistroName -imatch "CLEARLINUX") {
 				$CleanedDistroName = "CLEARLINUX"
-			}
-			else
-			{
+			} else {
 				$CleanedDistroName = "UNKNOWN"
 			}
 			Set-Variable -Name detectedDistro -Value $CleanedDistroName -Scope Global
 			SetDistroSpecificVariables -detectedDistro $detectedDistro
-			LogMsg "Linux distro detected : $CleanedDistroName"	
+			LogMsg "Linux distro detected : $CleanedDistroName"
 		}
-	}
-	else
-	{
+	} else {
 		LogMsg "Distro Already Detected as : $detectedDistro"
-		$CleanedDistroName = $detectedDistro 
+		$CleanedDistroName = $detectedDistro
 	}
 	return $CleanedDistroName
 }
 
-Function WaitFor($seconds,$minutes,$hours)
-{
-	if(!$hours -and !$minutes -and !$seconds)
-	{
+Function WaitFor($seconds,$minutes,$hours) {
+	if(!$hours -and !$minutes -and !$seconds) {
 		Write-Output "Come on.. Mention at least one second bro ;-)"
-	}
-	else
-	{
-		if(!$hours)
-		{
-			$hours = 0
-		}
-		if(!$minutes)
-		{
-			$minutes = 0
-		}
-		if(!$seconds)
-		{
-			$seconds = 0
-		}
+	} else {
+		if(!$hours)	{ $hours = 0 }
+		if(!$minutes) { $minutes = 0 }
+		if(!$seconds) { $seconds = 0 }
 
 		$timeToSleepInSeconds = ($hours*60*60) + ($minutes*60) + $seconds
-		$secondsRemaining = $timeToSleepInSeconds 
+		$secondsRemaining = $timeToSleepInSeconds
 		$secondsRemainingPercentage = (100 - (($secondsRemaining/$timeToSleepInSeconds)*100))
-		for ($i = 1; $i -le $timeToSleepInSeconds; $i++)
-		{
+		for ($i = 1; $i -le $timeToSleepInSeconds; $i++) {
 			write-progress -Id 27 -activity SLEEPING -Status "$($secondsRemaining) seconds remaining..." -percentcomplete $secondsRemainingPercentage
 			$secondsRemaining = $timeToSleepInSeconds - $i
 			$secondsRemainingPercentage = (100 - (($secondsRemaining/$timeToSleepInSeconds)*100))
@@ -736,18 +597,12 @@ Function WaitFor($seconds,$minutes,$hours)
 		}
 		write-progress -Id 27 -activity SLEEPING -Status "Wait Completed..!" -Completed
 	}
-
 }
 
 Function GetAndCheckKernelLogs($allDeployedVMs, $status, $vmUser, $vmPassword) {
 	try {
-		if ( !$vmUser ) {
-			$vmUser = $user
-		}
-
-		if ( !$vmPassword ) {
-			$vmPassword = $password
-		}
+		if ( !$vmUser ) { $vmUser = $user }
+		if ( !$vmPassword ) { $vmPassword = $password }
 
 		$retValue = $false
 		foreach ($VM in $allDeployedVMs) {
@@ -769,7 +624,7 @@ Function GetAndCheckKernelLogs($allDeployedVMs, $status, $vmUser, $vmPassword) {
 				LogMsg "Return value of RemoteCopy"
 				LogMsg "$($VM.RoleName): $status Kernel logs collected ..SUCCESSFULLY"
 				LogMsg "Checking for call traces in kernel logs.."
-				$KernelLogs = Get-Content $InitailBootLog 
+				$KernelLogs = Get-Content $InitailBootLog
 				$callTraceFound  = $false
 				foreach ( $line in $KernelLogs ) {
 					if (( $line -imatch "Call Trace" ) -and  ($line -inotmatch "initcall ")) {
@@ -820,13 +675,13 @@ Function GetAndCheckKernelLogs($allDeployedVMs, $status, $vmUser, $vmPassword) {
 				#Removing final dmesg file from logs to reduce the size of logs. We can always see complete Final Logs as : Initial Kernel Logs + Difference in Kernel Logs
 				Remove-Item -Path $FinalBootLog -Force | Out-Null
 				if($null -eq $KernelDiff) {
-					LogMsg "** Initial and Final Kernel Logs has same content **"  
+					LogMsg "** Initial and Final Kernel Logs has same content **"
 					Set-Content -Value "*** Initial and Final Kernel Logs has same content ***" -Path $KernelLogStatus
 					$retValue = $true
 				} else {
 					$errorCount = 0
 					Set-Content -Value "Following lines were added in the kernel log during execution of test." -Path $KernelLogStatus
-					LogMsg "Following lines were added in the kernel log during execution of test." 
+					LogMsg "Following lines were added in the kernel log during execution of test."
 					Add-Content -Value "-------------------------------START----------------------------------" -Path $KernelLogStatus
 					foreach ($line in $KernelDiff) {
 						Add-Content -Value $line.InputObject -Path $KernelLogStatus
@@ -880,151 +735,124 @@ Function GetAndCheckKernelLogs($allDeployedVMs, $status, $vmUser, $vmPassword) {
 	return $retValue
 }
 
-Function CheckKernelLogs($allVMData, $vmUser, $vmPassword)
-{
-	try
-	{
+Function CheckKernelLogs($allVMData, $vmUser, $vmPassword) {
+	try {
 		$errorLines = @()
 		$errorLines += "Call Trace"
 		$errorLines += "rcu_sched self-detected stall on CPU"
 		$errorLines += "rcu_sched detected stalls on"
 		$errorLines += "BUG: soft lockup"
 		$totalErrors = 0
-		if ( !$vmUser )
-		{
-			$vmUser = $user
-		}
-		if ( !$vmPassword )
-		{
-			$vmPassword = $password
-		}
+		if ( !$vmUser ) { $vmUser = $user }
+		if ( !$vmPassword ) { $vmPassword = $password }
 		$retValue = $false
-		foreach ($VM in $allVMData)
-		{
+		foreach ($VM in $allVMData) {
 			$vmErrors = 0
 			$BootLogDir="$Logdir\$($VM.RoleName)"
 			mkdir $BootLogDir -Force | Out-Null
 			LogMsg "Collecting $($VM.RoleName) VM Kernel $status Logs.."
+
 			$currentKernelLogFile="$BootLogDir\CurrentKernelLogs.txt"
 			$out = RunLinuxCmd -ip $VM.PublicIP -port $VM.SSHPort -username $vmUser -password $vmPassword -command "dmesg > /home/$vmUser/CurrentKernelLogs.txt" -runAsSudo
 			LogMsg "Return value of RunLinuxCmd: $out"
+
 			$out = RemoteCopy -download -downloadFrom $VM.PublicIP -port $VM.SSHPort -files "/home/$vmUser/CurrentKernelLogs.txt" -downloadTo $BootLogDir -username $vmUser -password $vmPassword
 			LogMsg "Return value of RemoteCopy: $out"
 			LogMsg "$($VM.RoleName): $status Kernel logs collected ..SUCCESSFULLY"
-			foreach ($errorLine in $errorLines)
-			{
+
+			foreach ($errorLine in $errorLines) {
 				LogMsg "Checking for $errorLine in kernel logs.."
-				$KernelLogs = Get-Content $currentKernelLogFile 
+				$KernelLogs = Get-Content $currentKernelLogFile
 				#$callTraceFound  = $false
-				foreach ( $line in $KernelLogs )
-				{
-					if ( ($line -imatch "$errorLine") -and ($line -inotmatch "initcall "))
-					{
+				foreach ( $line in $KernelLogs ) {
+					if ( ($line -imatch "$errorLine") -and ($line -inotmatch "initcall ")) {
 						LogError $line
 						$totalErrors += 1
 						$vmErrors += 1
 					}
-					if ( $line -imatch "\[<")
-					{
+					if ( $line -imatch "\[<") {
 						LogError $line
 					}
 				}
 			}
-			if ( $vmErrors -eq 0 )
-			{
+			if ( $vmErrors -eq 0 ) {
 				LogMsg "$($VM.RoleName) : No issues in kernel logs."
 				$retValue = $true
-			}
-			else
-			{
+			} else {
 				LogError "$($VM.RoleName) : $vmErrors errors found."
 				$retValue = $false
 			}
 		}
-		if ( $totalErrors -eq 0 )
-		{
+		if ( $totalErrors -eq 0 ) {
 			$retValue = $true
-		}
-		else
-		{
+		} else {
 			$retValue = $false
 		}
-	}
-	catch
-	{
+	} catch {
 		$retValue = $false
 	}
 	return $retValue
 }
 
-Function SetDistroSpecificVariables($detectedDistro)
-{
-	$python_cmd = "python"	
+Function SetDistroSpecificVariables($detectedDistro) {
+	$python_cmd = "python"
 	LogMsg "Set `$python_cmd > $python_cmd"
 	Set-Variable -Name python_cmd -Value $python_cmd -Scope Global
 	Set-Variable -Name ifconfig_cmd -Value "ifconfig" -Scope Global
-	if(($detectedDistro -eq "SLES") -or ($detectedDistro -eq "SUSE"))
-	{
+
+	if(($detectedDistro -eq "SLES") -or ($detectedDistro -eq "SUSE")) {
 		Set-Variable -Name ifconfig_cmd -Value "/sbin/ifconfig" -Scope Global
 		Set-Variable -Name fdisk -Value "/sbin/fdisk" -Scope Global
 		LogMsg "Set `$ifconfig_cmd > $ifconfig_cmd for $detectedDistro"
 		LogMsg "Set `$fdisk > /sbin/fdisk for $detectedDistro"
-	}
-	else
-	{
+	} else {
 		Set-Variable -Name fdisk -Value "fdisk" -Scope Global
 		LogMsg "Set `$fdisk > fdisk for $detectedDistro"
 	}
 }
 
-Function DeployVMs ($xmlConfig, $setupType, $Distro, $getLogsIfFailed = $false, $GetDeploymentStatistics = $false, [string]$region = "", [int]$timeOutSeconds = 600)
-{
+Function DeployVMs ($xmlConfig, $setupType, $Distro, $getLogsIfFailed = $false, $GetDeploymentStatistics = $false, [string]$region = "", [int]$timeOutSeconds = 600) {
 	#$AzureSetup = $xmlConfig.config.$TestPlatform.General
-	
+
 	#Test Platform Azure
-	if ( $TestPlatform -eq "Azure" )
-	{
+	if ( $TestPlatform -eq "Azure" ) {
 		$retValue = DeployResourceGroups  -xmlConfig $xmlConfig -setupType $setupType -Distro $Distro -getLogsIfFailed $getLogsIfFailed -GetDeploymentStatistics $GetDeploymentStatistics -region $region
 	}
-	if ( $TestPlatform -eq "HyperV" )
-	{
+
+	if ( $TestPlatform -eq "HyperV" ) {
 		$retValue = DeployHyperVGroups  -xmlConfig $xmlConfig -setupType $setupType -Distro $Distro -getLogsIfFailed $getLogsIfFailed -GetDeploymentStatistics $GetDeploymentStatistics
-		
+
 	}
-	if ( $retValue -and $CustomKernel)
-	{
+
+	if ( $retValue -and $CustomKernel) {
 		LogMsg "Custom kernel: $CustomKernel will be installed on all machines..."
 		$kernelUpgradeStatus = InstallCustomKernel -CustomKernel $CustomKernel -allVMData $allVMData -RestartAfterUpgrade
-		if ( !$kernelUpgradeStatus )
-		{
+		if ( !$kernelUpgradeStatus ) {
 			LogError "Custom Kernel: $CustomKernel installation FAIL. Aborting tests."
 			$retValue = ""
 		}
 	}
-	if ( $retValue -and $CustomLIS)
-	{
+
+	if ( $retValue -and $CustomLIS) {
 		LogMsg "Custom LIS: $CustomLIS will be installed on all machines..."
 		$LISUpgradeStatus = InstallCustomLIS -CustomLIS $CustomLIS -allVMData $allVMData -customLISBranch $customLISBranch -RestartAfterUpgrade
-		if ( !$LISUpgradeStatus )
-		{
+		if ( !$LISUpgradeStatus ) {
 			LogError "Custom Kernel: $CustomKernel installation FAIL. Aborting tests."
 			$retValue = ""
 		}
 	}
-	if ( $retValue -and $EnableAcceleratedNetworking)
-	{
+
+	if ( $retValue -and $EnableAcceleratedNetworking) {
 		$SRIOVStatus = EnableSRIOVInAllVMs -allVMData $allVMData
-		if ( !$SRIOVStatus)
-		{
+		if ( !$SRIOVStatus) {
 			LogError "Failed to enable Accelerated Networking. Aborting tests."
 			$retValue = ""
 		}
 	}
-	if ( $retValue -and $resizeVMsAfterDeployment)
-	{
+
+	if ( $retValue -and $resizeVMsAfterDeployment) {
 		$SRIOVStatus = EnableSRIOVInAllVMs -allVMData $allVMData
-		if ( $SRIOVStatus -ne "True" )
-		{
+		if ( $SRIOVStatus -ne "True" ) {
 			LogError "Failed to enable Accelerated Networking. Aborting tests."
 			$retValue = ""
 		}
@@ -1036,9 +864,9 @@ Function Test-TCP($testIP, $testport) {
 	$socket = new-object Net.Sockets.TcpClient
 	$isConnected = "False"
 	try {
-		$socket.Connect($testIP, $testPort) 
+		$socket.Connect($testIP, $testPort)
 	} catch [System.Net.Sockets.SocketException] {
-		LogWarn "System Socket Exception happened" 
+		LogWarn "System Socket Exception happened"
 	}
 	if ($socket.Connected) {
 		$isConnected = "True"
@@ -1047,8 +875,7 @@ Function Test-TCP($testIP, $testport) {
 	return $isConnected
 }
 
-Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $username, $password, [switch]$upload, [switch]$download, [switch]$usePrivateKey, [switch]$doNotCompress) #Removed XML config
-{
+Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $username, $password, [switch]$upload, [switch]$download, [switch]$usePrivateKey, [switch]$doNotCompress) { #Removed XML config
 	$retry=1
 	$maxRetry=20
 	if($upload) {
@@ -1079,7 +906,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 							$CompressCount += 1
 						}
 					}
-				}				
+				}
 				if ( $CompressCount -eq $fileCounter ) {
 					$retry=1
 					$maxRetry=10
@@ -1248,8 +1075,8 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 							${downloadFrom}=$args[5];
 							$downloadTo=$args[6];
 							$downloadStatusRandomFile=$args[7];
-							Set-Location $curDir; 
-							Write-Output y | .\tools\pscp.exe  -v -2 -unsafe -pw $password -q -P $port $username@${downloadFrom}:$testFile $downloadTo 2> $downloadStatusRandomFile; 
+							Set-Location $curDir;
+							Write-Output y | .\tools\pscp.exe  -v -2 -unsafe -pw $password -q -P $port $username@${downloadFrom}:$testFile $downloadTo 2> $downloadStatusRandomFile;
 							Add-Content -Value "DownloadExtiCode_$LASTEXITCODE" -Path $downloadStatusRandomFile;
 						} -ArgumentList $curDir,$password,$port,$testFile,$username,${downloadFrom},$downloadTo,$downloadStatusRandomFile
 						Start-Sleep -Milliseconds 100
@@ -1338,7 +1165,7 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 
 	$currentDir = $PWD.Path
 	$RunStartTime = Get-Date
-	
+
 	if($runAsSudo) {
 		$plainTextPassword = $password.Replace('"','');
 		if ( $detectedDistro -eq "COREOS" ) {
@@ -1351,7 +1178,7 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 	} else {
 		if ( $detectedDistro -eq "COREOS" )	{
 			$linuxCommand = "`"export PATH=/usr/share/oem/python/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/share/oem/bin:/opt/bin && $command && Write-Output AZURE-LINUX-EXIT-CODE-`$? || Write-Output AZURE-LINUX-EXIT-CODE-`$?`""
-			$logCommand = "`"export PATH=/usr/share/oem/python/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/share/oem/bin:/opt/bin && $command`""		
+			$logCommand = "`"export PATH=/usr/share/oem/python/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/share/oem/bin:/opt/bin && $command`""
 		} else {
 			$linuxCommand = "`"bash -c `'bash runtest.sh ; Write-Output AZURE-LINUX-EXIT-CODE-`$?`' `""
 			$logCommand = "`"$command`""
@@ -1443,7 +1270,7 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 					}
 				}
 			}
-			
+
 			$debugLines = Get-Content $LogDir\$randomFileName
 			if($debugLines) {
 				$debugString = ""
@@ -1459,7 +1286,7 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 				Add-Content -Path $LogDir\CurrentTestBackgroundJobs.txt -Value $runLinuxCmdJob.Id
 				$retValue = $runLinuxCmdJob.Id
 			} else {
-				Remove-Job $runLinuxCmdJob 
+				Remove-Job $runLinuxCmdJob
 				if (!$isBackGroundProcessStarted) {
 					LogError "Failed to start process in background.."
 				}
@@ -1489,7 +1316,7 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 					}
 				}
 			}
-			Remove-Item $LogDir\$randomFileName -Force | Out-Null   
+			Remove-Item $LogDir\$randomFileName -Force | Out-Null
 		} else {
 			While($notExceededTimeLimit -and ($runLinuxCmdJob.State -eq "Running")) {
 				$jobOut = Receive-Job $runLinuxCmdJob 2> $LogDir\$randomFileName
@@ -1514,7 +1341,7 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 				}
 
 				Write-Progress -Activity "Attempt : $attemptswot+$attemptswt : Executing $logCommand on $ip : $port" -Status "Timeout in $($RunMaxAllowedTime - $RunElaplsedTime) seconds.." -Id 87678 -PercentComplete (($RunElaplsedTime/$RunMaxAllowedTime)*100) -CurrentOperation "SSH ACTIVITY : $debugString"
-				#Write-Output "Attempt : $attemptswot+$attemptswt : Executing $logCommand on $ip : $port" 
+				#Write-Output "Attempt : $attemptswot+$attemptswt : Executing $logCommand on $ip : $port"
 				$RunCurrentTime = Get-Date
 				$RunDiffTime = $RunCurrentTime - $RunStartTime
 				$RunElaplsedTime =  $RunDiffTime.TotalSeconds
@@ -1550,7 +1377,7 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 
 			Write-Progress -Activity "Attempt : $attemptswot+$attemptswt : Executing $logCommand on $ip : $port" -Status $runLinuxCmdJob.State -Id 87678 -SecondsRemaining ($RunMaxAllowedTime - $RunElaplsedTime) -Completed
 			#Write-Output "Attempt : $attemptswot+$attemptswt : Executing $logCommand on $ip : $port"
-			Remove-Job $runLinuxCmdJob 
+			Remove-Job $runLinuxCmdJob
 			Remove-Item $LogDir\$randomFileName -Force | Out-Null
 			if ($LinuxExitCode -imatch "AZURE-LINUX-EXIT-CODE-0") {
 				$returnCode = 0
@@ -1600,43 +1427,39 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 #endregion
 
 #region Test Case Logging
-Function DoTestCleanUp($CurrentTestResult, $testName, $DeployedServices, $ResourceGroups, [switch]$keepUserDirectory, [switch]$SkipVerifyKernelLogs)
-{
-	try
-	{
+Function DoTestCleanUp($CurrentTestResult, $testName, $DeployedServices, $ResourceGroups, [switch]$keepUserDirectory, [switch]$SkipVerifyKernelLogs) {
+	try	{
 		$result = $CurrentTestResult.TestResult
-		
-		if($ResourceGroups)
-		{
-			try
-			{
-				if ($allVMData.Count -gt 1)
-				{
+
+		if($ResourceGroups) {
+			try	{
+				if ($allVMData.Count -gt 1) {
 					$vmData = $allVMData[0]
+				} else {
+					$vmData = $allVMData
 				}
-				else 
-				{
-					$vmData = $allVMData	
-				}
+
 				$TestName = $CurrentTestData.TestName
 				$FilesToDownload = "$($vmData.RoleName)-*.txt"
+
 				$out = RemoteCopy -upload -uploadTo $vmData.PublicIP -port $vmData.SSHPort -files .\Testscripts\Linux\CollectLogFile.sh -username $user -password $password
 				LogMsg "Return value of RemoteCopy: $out"
+
 				$out = RunLinuxCmd -username $user -password $password -ip $vmData.PublicIP -port $vmData.SSHPort -command "bash CollectLogFile.sh" -ignoreLinuxExitCode
 				LogMsg "Return value of RunLinuxCmd: $out"
+
 				$out = RemoteCopy -downloadFrom $vmData.ublicIP -port $vmData.SSHPort -username $user -password $password -files "$FilesToDownload" -downloadTo "$LogDir" -download
 				LogMsg "Return value of RemoteCopy: $out"
+
 				$KernelVersion = Get-Content "$LogDir\$($vmData.RoleName)-kernelVersion.txt"
 				$GuestDistro = Get-Content "$LogDir\$($vmData.RoleName)-distroVersion.txt"
 				$LISMatch = (Select-String -Path "$LogDir\$($vmData.RoleName)-lis.txt" -Pattern "^version:").Line
-				if ($LISMatch)
-				{
+				if ($LISMatch) {
 					$LISVersion = $LISMatch.Split(":").Trim()[1]
-				}
-				else
-				{
+				} else {
 					$LISVersion = "NA"
 				}
+
 				#region Host Version checking
 				$FoundLineNumber = (Select-String -Path "$LogDir\$($vmData.RoleName)-dmesg.txt" -Pattern "Hyper-V Host Build").LineNumber
 				$ActualLineNumber = $FoundLineNumber - 1
@@ -1645,163 +1468,122 @@ Function DoTestCleanUp($CurrentTestResult, $testName, $DeployedServices, $Resour
 				$FinalLine = $FinalLine.Replace('; Vmbus version:4.0','')
 				$FinalLine = $FinalLine.Replace('; Vmbus version:3.0','')
 				$HostVersion = ($FinalLine.Split(":")[$FinalLine.Split(":").Count -1 ]).Trim().TrimEnd(";")
-				#endregion				
-				
-				if($EnableAcceleratedNetworking -or ($currentTestData.AdditionalHWConfig.Networking -imatch "SRIOV"))
-				{
+				#endregion
+
+				if($EnableAcceleratedNetworking -or ($currentTestData.AdditionalHWConfig.Networking -imatch "SRIOV")) {
 					$Networking = "SRIOV"
+				} else {
+					$Networking = "Synthetic"
 				}
-				else
-				{
-					$Networking = "Synthetic"    
-				}
-				if ($TestPlatform -eq "Azure")
-				{
+
+				if ($TestPlatform -eq "Azure") {
 					$VMSize = $vmData.InstanceSize
-				}				
-				if ( $TestPlatform -eq "HyperV")
-				{
+				} elseif ( $TestPlatform -eq "HyperV") {
 					$VMSize = $HyperVInstanceSize
 				}
+
 				#endregion
 				UploadTestResultToDatabase -TestPlatform $TestPlatform -TestLocation $TestLocation -TestCategory $TestCategory `
 				-TestArea $TestArea -TestName $CurrentTestData.TestName -CurrentTestResult $CurrentTestResult `
 				-ExecutionTag $ResultDBTestTag -GuestDistro $GuestDistro -KernelVersion $KernelVersion `
 				-LISVersion $LISVersion -HostVersion $HostVersion -VMSize $VMSize -Networking $Networking `
 				-ARMImage $ARMImage -OsVHD $OsVHD -BuildURL $env:BUILD_URL
-			}
-			catch
-			{
+			} catch {
 				$line = $_.InvocationInfo.ScriptLineNumber
 				$script_name = ($_.InvocationInfo.ScriptName).Replace($PWD,".")
 				$ErrorMessage =  $_.Exception.Message
 				LogError "EXCEPTION : $ErrorMessage"
-				LogError "Source : Line $line in script $script_name."				
+				LogError "Source : Line $line in script $script_name."
 				LogError "Ignorable error in collecting final data from VMs."
 			}
+
 			$currentTestBackgroundJobs = Get-Content $LogDir\CurrentTestBackgroundJobs.txt -ErrorAction SilentlyContinue
-			if ( $currentTestBackgroundJobs )
-			{
+			if ( $currentTestBackgroundJobs ) {
 				$currentTestBackgroundJobs = $currentTestBackgroundJobs.Split()
 			}
-			foreach ( $taskID in $currentTestBackgroundJobs )
-			{
-				#Removal of background 
+
+			foreach ( $taskID in $currentTestBackgroundJobs ) {
+				#Removal of background
 				LogMsg "Removing Background Job ID : $taskID..."
 				Remove-Job -Id $taskID -Force
 				Remove-Item $LogDir\CurrentTestBackgroundJobs.txt -ErrorAction SilentlyContinue
 			}
+
 			$user=$xmlConfig.config.$TestPlatform.Deployment.Data.UserName
-			if ( !$SkipVerifyKernelLogs )
-			{
-				try
-				{
+			if ( !$SkipVerifyKernelLogs ) {
+				try {
 					$KernelLogOutput=GetAndCheckKernelLogs -allDeployedVMs $allVMData -status "Final"
 					LogMsg "Return value of GetAndCheckKernelLogs: $KernelLogOutput"
-				}
-				catch 
-				{
+				} catch {
 					$ErrorMessage =  $_.Exception.Message
-					LogMsg "EXCEPTION in GetAndCheckKernelLogs(): $ErrorMessage"	
+					LogMsg "EXCEPTION in GetAndCheckKernelLogs(): $ErrorMessage"
 				}
-			}			
+			}
+
 			$isClened = @()
 			$ResourceGroups = $ResourceGroups.Split("^")
 			$isVMLogsCollected = $false
-			foreach ($group in $ResourceGroups)
-			{
-				if ($ForceDeleteResources)
-				{
+			foreach ($group in $ResourceGroups) {
+				if ($ForceDeleteResources) {
 					LogMsg "-ForceDeleteResources is Set. Deleting $group."
-					if ($TestPlatform -eq "Azure")
-					{
+					if ($TestPlatform -eq "Azure") {
 						$isClened = DeleteResourceGroup -RGName $group
 
+					} elseif ($TestPlatform -eq "HyperV") {
+						$isClened = DeleteHyperVGroup -HyperVGroupName $group
 					}
-					elseif ($TestPlatform -eq "HyperV")
-					{
-						$isClened = DeleteHyperVGroup -HyperVGroupName $group										
-					}
-					if (!$isClened)
-					{
+
+					if (!$isClened) {
 						LogMsg "CleanUP unsuccessful for $group.. Please delete the services manually."
-					}
-					else
-					{
+					} else {
 						LogMsg "CleanUP Successful for $group.."
 					}
-				}
-				else 
-				{
-					if($result -eq "PASS")
-					{
-						if($EconomyMode -and (-not $IsLastCaseInCycle))
-						{
+				} else {
+					if($result -eq "PASS") {
+						if($EconomyMode -and (-not $IsLastCaseInCycle))	{
 							LogMsg "Skipping cleanup of Resource Group : $group."
-							if(!$keepUserDirectory)
-							{
+							if(!$keepUserDirectory)	{
 								RemoveAllFilesFromHomeDirectory -allDeployedVMs $allVMData
 							}
-						}
-						else
-						{
-							try 
-							{
-								$RGdetails = Get-AzureRmResourceGroup -Name $group -ErrorAction SilentlyContinue	
-							}
-							catch 
-							{
+						} else {
+							try {
+								$RGdetails = Get-AzureRmResourceGroup -Name $group -ErrorAction SilentlyContinue
+							} catch {
 								LogMsg "Resource group '$group' not found."
 							}
-							
-							if ( $RGdetails.Tags )
-							{
-								if ( (  $RGdetails.Tags[0].Name -eq $preserveKeyword ) -and (  $RGdetails.Tags[0].Value -eq "yes" ))
-								{
+
+							if ( $RGdetails.Tags ) {
+								if ( (  $RGdetails.Tags[0].Name -eq $preserveKeyword ) -and (  $RGdetails.Tags[0].Value -eq "yes" )) {
 									LogMsg "Skipping Cleanup of preserved resource group."
 									LogMsg "Collecting VM logs.."
-									if ( !$isVMLogsCollected)
-									{
+									if ( !$isVMLogsCollected) {
 										GetVMLogs -allVMData $allVMData
 									}
 									$isVMLogsCollected = $true
 								}
-							}
-							else
-							{
-								if ( $DoNotDeleteVMs )
-								{
+							} else {
+								if ( $DoNotDeleteVMs ) {
 									LogMsg "Skipping cleanup due to 'DoNotDeleteVMs' flag is set."
-								}
-								else
-								{
+								} else {
 									LogMsg "Cleaning up deployed test virtual machines."
-									if ($TestPlatform -eq "Azure")
-									{
+									if ($TestPlatform -eq "Azure") {
 										$isClened = DeleteResourceGroup -RGName $group
 
+									} elseif ($TestPlatform -eq "HyperV") {
+										$isClened = DeleteHyperVGroup -HyperVGroupName $group
 									}
-									elseif ($TestPlatform -eq "HyperV")
-									{
-										$isClened = DeleteHyperVGroup -HyperVGroupName $group										
-									}
-									if (!$isClened)
-									{
+
+									if (!$isClened) {
 										LogMsg "CleanUP unsuccessful for $group.. Please delete the services manually."
-									}
-									else
-									{
+									} else {
 										LogMsg "CleanUP Successful for $group.."
-									}											
+									}
 								}
 							}
 						}
-					}
-					else
-					{
+					} else {
 						LogMsg "Preserving the Resource Group(s) $group"
-						if ($TestPlatform -eq "Azure")
-						{
+						if ($TestPlatform -eq "Azure") {
 							LogMsg "Setting tags : preserve = yes; testName = $testName"
 							$hash = @{}
 							$hash.Add($preserveKeyword,"yes")
@@ -1810,59 +1592,50 @@ Function DoTestCleanUp($CurrentTestResult, $testName, $DeployedServices, $Resour
 							LogMsg "Return value of Set-AzureRmResourceGroup: $out"
 						}
 						LogMsg "Collecting VM logs.."
-						if ( !$isVMLogsCollected)
-						{
+						if ( !$isVMLogsCollected) {
 							GetVMLogs -allVMData $allVMData
 						}
 						$isVMLogsCollected = $true
-						if(!$keepUserDirectory -and !$DoNotDeleteVMs -and $EconomyMode)
-						{
+						if(!$keepUserDirectory -and !$DoNotDeleteVMs -and $EconomyMode) {
 							RemoveAllFilesFromHomeDirectory -allDeployedVMs $allVMData
 						}
-						if($DoNotDeleteVMs)
-						{
+
+						if($DoNotDeleteVMs) {
 							$xmlConfig.config.$TestPlatform.Deployment.$setupType.isDeployed = "NO"
 						}
-					}						
+					}
 				}
 			}
-		}
-		else
-		{
+		} else {
 			UploadTestResultToDatabase -TestPlatform $TestPlatform -TestLocation $TestLocation -TestCategory $TestCategory -TestArea $TestArea -TestName $CurrentTestData.TestName -CurrentTestResult $CurrentTestResult -ExecutionTag $ResultDBTestTag -GuestDistro $GuestDistro -KernelVersion $KernelVersion -LISVersion $LISVersion -HostVersion $HostVersion -VMSize $VMSize -Networking $Networking -ARMImage $ARMImage -OsVHD $OsVHD -BuildURL $env:BUILD_URL
 			LogMsg "Skipping cleanup, as No services / resource groups / HyperV Groups deployed for cleanup!"
 		}
-	}
-	catch
-	{
+	} catch {
 		$ErrorMessage =  $_.Exception.Message
-		Write-Output "EXCEPTION in DoTestCleanUp : $ErrorMessage"  
+		Write-Output "EXCEPTION in DoTestCleanUp : $ErrorMessage"
 	}
 }
 
-Function GetFinalizedResult($resultArr, $checkValues, $subtestValues, $currentTestData)
-{
+Function GetFinalizedResult($resultArr, $checkValues, $subtestValues, $currentTestData) {
 	$result = "", ""
 	if (($resultArr -contains "FAIL") -or ($resultArr -contains "Aborted")) {
 		$result[0] = "FAIL"
-	}
-	else{
+	} else {
 		$result[0] = "PASS"
 	}
+
 	$i = 0
 	$subtestLen = $SubtestValues.Length
-	while ($i -lt $subtestLen)
-	{
+
+	while ($i -lt $subtestLen) {
 		$currentTestValue = $SubtestValues[$i]
 		$currentTestResult = $resultArr[$i]
 		$currentTestName = $currentTestData.testName
-		if ($checkValues -imatch $currentTestResult)
-		{				
+		if ($checkValues -imatch $currentTestResult) {
 			$result[1] += "		  $currentTestName : $currentTestValue : $currentTestResult <br />"
 		}
 		$i = $i + 1
 	}
-
 	return $result
 }
 
@@ -1879,109 +1652,87 @@ Function CreateResultSummary($testResult, $checkValues, $testName, $metaData)
 	return $resultString
 }
 
-Function GetFinalResultHeader($resultArr){
-	if(($resultArr -imatch "FAIL" ) -or ($resultArr -imatch "Aborted"))
-	{
+Function GetFinalResultHeader($resultArr) {
+	if(($resultArr -imatch "FAIL" ) -or ($resultArr -imatch "Aborted")) {
 		$result = "FAIL"
-		if($resultArr -imatch "Aborted")
-		{
+		if($resultArr -imatch "Aborted") {
 			$result = "Aborted"
 		}
-
-	}
-	else
-	{
+	} else {
 		$result = "PASS"
 	}
 	return $result
 }
 
-Function SetStopWatch($str)
-{
+Function SetStopWatch($str) {
 	$sw = [system.diagnostics.stopwatch]::startNew()
 	return $sw
 }
 
-Function GetStopWatchElapasedTime([System.Diagnostics.Stopwatch]$sw, [string] $format)
-{
-	if ($format -eq "ss")
-	{
+Function GetStopWatchElapasedTime([System.Diagnostics.Stopwatch]$sw, [string] $format) {
+	if ($format -eq "ss") {
 		$num=$sw.Elapsed.TotalSeconds
-	}
-	elseif ($format -eq "hh")
-	{
+	} elseif ($format -eq "hh") {
 		$num=$sw.Elapsed.TotalHours
-	}
-	elseif ($format -eq "mm")
-	{
+	} elseif ($format -eq "mm") {
 		$num=$sw.Elapsed.TotalMinutes
 	}
-	return [System.Math]::Round($Num, 2)
 
+	return [System.Math]::Round($Num, 2)
 }
 
-Function GetVMLogs($allVMData)
-{
-	foreach ($testVM in $allVMData)
-	{
+Function GetVMLogs($allVMData) {
+	foreach ($testVM in $allVMData) {
 		$testIP = $testVM.PublicIP
 		$testPort = $testVM.SSHPort
 		$LisLogFile = "LIS-Logs" + ".tgz"
-		try
-		{
-			LogMsg "Collecting logs from IP : $testIP PORT : $testPort"	
+
+		try	{
+			LogMsg "Collecting logs from IP : $testIP PORT : $testPort"
 			RemoteCopy -upload -uploadTo $testIP -username $user -port $testPort -password $password -files '.\Testscripts\Linux\LIS-LogCollector.sh'
 			RunLinuxCmd -username $user -password $password -ip $testIP -port $testPort -command 'chmod +x LIS-LogCollector.sh'
+
 			$out = RunLinuxCmd -username $user -password $password -ip $testIP -port $testPort -command './LIS-LogCollector.sh -v' -runAsSudo
 			LogMsg "Return value of RunLinuxCmd $out"
+
 			RemoteCopy -download -downloadFrom $testIP -username $user -password $password -port $testPort -downloadTo $LogDir -files $LisLogFile
 			LogMsg "Logs collected successfully from IP : $testIP PORT : $testPort"
-			if ($TestPlatform -eq "Azure")
-			{
+			if ($TestPlatform -eq "Azure") {
 				Rename-Item -Path "$LogDir\$LisLogFile" -NewName ("LIS-Logs-" + $testVM.RoleName + ".tgz") -Force
 			}
-		}
-		catch
-		{
+		} catch {
 			$ErrorMessage =  $_.Exception.Message
 			LogError "EXCEPTION : $ErrorMessage"
-			LogError "Unable to collect logs from IP : $testIP PORT : $testPort"  		
+			LogError "Unable to collect logs from IP : $testIP PORT : $testPort"
 		}
 	}
 }
 
-Function RemoveAllFilesFromHomeDirectory($allDeployedVMs)
-{
-	foreach ($DeployedVM in $allDeployedVMs)
-	{
+Function RemoveAllFilesFromHomeDirectory($allDeployedVMs) {
+	foreach ($DeployedVM in $allDeployedVMs) {
 		$testIP = $DeployedVM.PublicIP
 		$testPort = $DeployedVM.SSHPort
-		try
-		{
-			LogMsg "Removing all files logs from IP : $testIP PORT : $testPort"	
+		try {
+			LogMsg "Removing all files logs from IP : $testIP PORT : $testPort"
 			$out = RunLinuxCmd -username $user -password $password -ip $testIP -port $testPort -command 'rm -rf *' -runAsSudo
 			LogMsg "Return value of RunLinuxCmd: $out"
-			LogMsg "All files removed from /home/$user successfully. VM IP : $testIP PORT : $testPort"  
-		}
-		catch
-		{
+			LogMsg "All files removed from /home/$user successfully. VM IP : $testIP PORT : $testPort"
+		} catch {
 			$ErrorMessage =  $_.Exception.Message
 			Write-Output "EXCEPTION : $ErrorMessage"
-			Write-Output "Unable to remove files from IP : $testIP PORT : $testPort"  		
+			Write-Output "Unable to remove files from IP : $testIP PORT : $testPort"
 		}
 	}
 }
 
-Function GetAllDeployementData($ResourceGroups)
-{
+Function GetAllDeployementData($ResourceGroups) {
 	$allDeployedVMs = @()
-	function CreateQuickVMNode()
-	{
+	function CreateQuickVMNode() {
 		$objNode = New-Object -TypeName PSObject
 		Add-Member -InputObject $objNode -MemberType NoteProperty -Name ServiceName -Value $ServiceName -Force
 		Add-Member -InputObject $objNode -MemberType NoteProperty -Name ResourceGroupName -Value $ResourceGroupName -Force
 		Add-Member -InputObject $objNode -MemberType NoteProperty -Name Location -Value $ResourceGroupName -Force
-		Add-Member -InputObject $objNode -MemberType NoteProperty -Name RoleName -Value $RoleName -Force 
+		Add-Member -InputObject $objNode -MemberType NoteProperty -Name RoleName -Value $RoleName -Force
 		Add-Member -InputObject $objNode -MemberType NoteProperty -Name PublicIP -Value $PublicIP -Force
 		Add-Member -InputObject $objNode -MemberType NoteProperty -Name PublicIPv6 -Value $PublicIP -Force
 		Add-Member -InputObject $objNode -MemberType NoteProperty -Name InternalIP -Value $InternalIP -Force
@@ -1992,8 +1743,7 @@ Function GetAllDeployementData($ResourceGroups)
 		return $objNode
 	}
 
-	foreach ($ResourceGroup in $ResourceGroups.Split("^"))
-	{
+	foreach ($ResourceGroup in $ResourceGroups.Split("^")) {
 		LogMsg "Collecting $ResourceGroup data.."
 
 		LogMsg "    Microsoft.Network/publicIPAddresses data collection in progress.."
@@ -2005,46 +1755,38 @@ Function GetAllDeployementData($ResourceGroups)
 		$currentRGLocation = (Get-AzureRmResourceGroup -ResourceGroupName $ResourceGroup).Location
 		LogMsg "    Microsoft.Network/loadBalancers data collection in progress.."
 		$LBdata = Get-AzureRmResource -ResourceGroupName $ResourceGroup -ResourceType "Microsoft.Network/loadBalancers" -ExpandProperties -Verbose
-		foreach ($testVM in $RGVMs)
-		{
+		foreach ($testVM in $RGVMs) {
 			$QuickVMNode = CreateQuickVMNode
 			$InboundNatRules = $LBdata.Properties.InboundNatRules
-			foreach ($endPoint in $InboundNatRules)
-			{
-				if ( $endPoint.Name -imatch $testVM.ResourceName)
-				{
+			foreach ($endPoint in $InboundNatRules) {
+				if ( $endPoint.Name -imatch $testVM.ResourceName) {
 					$endPointName = "$($endPoint.Name)".Replace("$($testVM.ResourceName)-","")
 					Add-Member -InputObject $QuickVMNode -MemberType NoteProperty -Name "$($endPointName)Port" -Value $endPoint.Properties.FrontendPort -Force
 				}
 			}
 			$LoadBalancingRules = $LBdata.Properties.LoadBalancingRules
-			foreach ( $LBrule in $LoadBalancingRules )
-			{
-				if ( $LBrule.Name -imatch "$ResourceGroup-LB-" )
-				{
+			foreach ( $LBrule in $LoadBalancingRules ) {
+				if ( $LBrule.Name -imatch "$ResourceGroup-LB-" ) {
 					$endPointName = "$($LBrule.Name)".Replace("$ResourceGroup-LB-","")
 					Add-Member -InputObject $QuickVMNode -MemberType NoteProperty -Name "$($endPointName)Port" -Value $LBrule.Properties.FrontendPort -Force
 				}
 			}
 			$Probes = $LBdata.Properties.Probes
-			foreach ( $Probe in $Probes )
-			{
-				if ( $Probe.Name -imatch "$ResourceGroup-LB-" )
-				{
+			foreach ( $Probe in $Probes ) {
+				if ( $Probe.Name -imatch "$ResourceGroup-LB-" ) {
 					$probeName = "$($Probe.Name)".Replace("$ResourceGroup-LB-","").Replace("-probe","")
 					Add-Member -InputObject $QuickVMNode -MemberType NoteProperty -Name "$($probeName)ProbePort" -Value $Probe.Properties.Port -Force
 				}
 			}
 
-			foreach ( $nic in $NICdata )
-			{
-				if (( $nic.Name -imatch $testVM.ResourceName) -and ( $nic.Name -imatch "PrimaryNIC"))
-				{
+			foreach ( $nic in $NICdata ) {
+				if (( $nic.Name -imatch $testVM.ResourceName) -and ( $nic.Name -imatch "PrimaryNIC")) {
 					$QuickVMNode.InternalIP = "$($nic.Properties.IpConfigurations[0].Properties.PrivateIPAddress)"
 				}
 			}
+
 			$QuickVMNode.ResourceGroupName = $ResourceGroup
-			
+
 			$QuickVMNode.PublicIP = ($RGIPData | Where-Object { $_.Properties.publicIPAddressVersion -eq "IPv4" }).Properties.ipAddress
 			$QuickVMNode.PublicIPv6 = ($RGIPData | Where-Object { $_.Properties.publicIPAddressVersion -eq "IPv6" }).Properties.ipAddress
 			$QuickVMNode.URL = ($RGIPData | Where-Object { $_.Properties.publicIPAddressVersion -eq "IPv4" }).Properties.dnsSettings.fqdn
@@ -2055,93 +1797,71 @@ Function GetAllDeployementData($ResourceGroups)
 			$QuickVMNode.Location = $currentRGLocation
 			$allDeployedVMs += $QuickVMNode
 		}
-		LogMsg "Collected $ResourceGroup data!"		
+		LogMsg "Collected $ResourceGroup data!"
 	}
 	return $allDeployedVMs
 }
 
-Function RestartAllDeployments($allVMData)
-{
-	if ($TestPlatform -eq "Azure")
-	{
+Function RestartAllDeployments($allVMData) {
+	if ($TestPlatform -eq "Azure") {
 		$RestartStatus = RestartAllAzureDeployments -allVMData $allVMData
-	}
-	elseif ($TestPlatform -eq "HyperV")
-	{
+	} elseif ($TestPlatform -eq "HyperV") {
 		$RestartStatus = RestartAllHyperVDeployments -allVMData $allVMData
-	}
-	else 
-	{
-		LogErr "Function RestartAllDeployments does not support '$TestPlatform' Test platform."	
+	} else {
+		LogErr "Function RestartAllDeployments does not support '$TestPlatform' Test platform."
 		$RestartStatus = "False"
 	}
+
 	return $RestartStatus
 }
 
-Function GetTotalPhysicalDisks($FdiskOutput)
-{
+Function GetTotalPhysicalDisks($FdiskOutput) {
 	$physicalDiskNames = ("sda","sdb","sdc","sdd","sde","sdf","sdg","sdh","sdi","sdj","sdk","sdl","sdm","sdn",
 			"sdo","sdp","sdq","sdr","sds","sdt","sdu","sdv","sdw","sdx","sdy","sdz", "sdaa", "sdab", "sdac", "sdad","sdae", "sdaf", "sdag", "sdah", "sdai")
+
 	$diskCount = 0
-	foreach ($physicalDiskName in $physicalDiskNames)
-	{
-		if ($FdiskOutput -imatch "Disk /dev/$physicalDiskName")
-		{
+
+	foreach ($physicalDiskName in $physicalDiskNames) {
+		if ($FdiskOutput -imatch "Disk /dev/$physicalDiskName") {
 			$diskCount += 1
 		}
 	}
 	return $diskCount
 }
 
-Function GetNewPhysicalDiskNames($FdiskOutputBeforeAddingDisk, $FdiskOutputAfterAddingDisk)
-{
+Function GetNewPhysicalDiskNames($FdiskOutputBeforeAddingDisk, $FdiskOutputAfterAddingDisk) {
 	$availableDisksBeforeAddingDisk = ""
 	$availableDisksAfterAddingDisk = ""
 	$physicalDiskNames = ("sda","sdb","sdc","sdd","sde","sdf","sdg","sdh","sdi","sdj","sdk","sdl","sdm","sdn",
 			"sdo","sdp","sdq","sdr","sds","sdt","sdu","sdv","sdw","sdx","sdy","sdz", "sdaa", "sdab", "sdac", "sdad","sdae", "sdaf", "sdag", "sdah", "sdai")
-	foreach ($physicalDiskName in $physicalDiskNames)
-	{
-		if ($FdiskOutputBeforeAddingDisk -imatch "Disk /dev/$physicalDiskName")
-		{
-			if ( $availableDisksBeforeAddingDisk -eq "" )
-			{
+	foreach ($physicalDiskName in $physicalDiskNames) {
+		if ($FdiskOutputBeforeAddingDisk -imatch "Disk /dev/$physicalDiskName") {
+			if ( $availableDisksBeforeAddingDisk -eq "" ) {
 				$availableDisksBeforeAddingDisk = "/dev/$physicalDiskName"
-			}
-			else
-			{
+			} else {
 				$availableDisksBeforeAddingDisk = $availableDisksBeforeAddingDisk + "^" + "/dev/$physicalDiskName"
 			}
 		}
 	}
-	foreach ($physicalDiskName in $physicalDiskNames)
-	{
-		if ($FdiskOutputAfterAddingDisk -imatch "Disk /dev/$physicalDiskName")
-		{
-			if ( $availableDisksAfterAddingDisk -eq "" )
-			{
+
+	foreach ($physicalDiskName in $physicalDiskNames) {
+		if ($FdiskOutputAfterAddingDisk -imatch "Disk /dev/$physicalDiskName") {
+			if ( $availableDisksAfterAddingDisk -eq "" ) {
 				$availableDisksAfterAddingDisk = "/dev/$physicalDiskName"
-			}
-			else
-			{
+			} else {
 				$availableDisksAfterAddingDisk = $availableDisksAfterAddingDisk + "^" + "/dev/$physicalDiskName"
 			}
 		}
 	}
-	$newDisks = ""
-	foreach ($afterDisk in $availableDisksAfterAddingDisk.Split("^"))
-	{
-		if($availableDisksBeforeAddingDisk -imatch $afterDisk)
-		{
 
-		}
-		else
-		{
-			if($newDisks -eq "")
-			{
+	$newDisks = ""
+	foreach ($afterDisk in $availableDisksAfterAddingDisk.Split("^")) {
+		if($availableDisksBeforeAddingDisk -imatch $afterDisk) {
+			LogMsg "$afterDisk bypassed"
+		} else {
+			if($newDisks -eq "") {
 				$newDisks = $afterDisk
-			}
-			else
-			{
+			} else {
 				$newDisks = $newDisks + "^" + $afterDisk
 			}
 		}
@@ -2149,55 +1869,54 @@ Function GetNewPhysicalDiskNames($FdiskOutputBeforeAddingDisk, $FdiskOutputAfter
 	return $newDisks
 }
 
-Function PerformIOTestOnDisk($testVMObject, [string]$attachedDisk, [string]$diskFileSystem)
-{
+Function PerformIOTestOnDisk($testVMObject, [string]$attachedDisk, [string]$diskFileSystem) {
 	$retValue = "Aborted"
 	$testVMSSHport = $testVMObject.sshPort
 	$testVMVIP = $testVMObject.ip
-	$testVMUsername = $testVMObject.user 
+	$testVMUsername = $testVMObject.user
 	$testVMPassword = $testVMObject.password
-	if ( $diskFileSystem -imatch "xfs" )
-	{
+
+	if ( $diskFileSystem -imatch "xfs" ) {
 		$diskFileSystem = "xfs -f"
 	}
+
 	$isVMAlive = Test-TCP -testIP $testVMVIP -testport $testVMSSHport
-	if ($isVMAlive -eq "True")
-	{
+	if ($isVMAlive -eq "True") {
 		$retValue = "FAIL"
 		$mountPoint = "/mnt/datadisk"
 		LogMsg "Performing I/O operations on $attachedDisk.."
+
 		$LogPath = "$LogDir\VerifyIO$($attachedDisk.Replace('/','-')).txt"
 		$dmesgBefore = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "dmesg" -runMaxAllowedTime 30 -runAsSudo
 		#CREATE A MOUNT DIRECTORY
-		$out = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "mkdir -p $mountPoint" -runAsSudo 
+		$out = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "mkdir -p $mountPoint" -runAsSudo
 		LogMsg "Return value of RunLinuxCmd: $out"
+
 		$partitionNumber=1
-		#$PartitionDiskOut = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "./ManagePartitionOnDisk.sh -diskName $attachedDisk -create yes -forRaid no" -runAsSudo 
-		$FormatDiskOut = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "time mkfs.$diskFileSystem $attachedDisk$partitionNumber" -runAsSudo -runMaxAllowedTime 2400 
-		$out = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "mount -o nobarrier $attachedDisk$partitionNumber $mountPoint" -runAsSudo 
+		#$PartitionDiskOut = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "./ManagePartitionOnDisk.sh -diskName $attachedDisk -create yes -forRaid no" -runAsSudo
+		$FormatDiskOut = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "time mkfs.$diskFileSystem $attachedDisk$partitionNumber" -runAsSudo -runMaxAllowedTime 2400
+		$out = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "mount -o nobarrier $attachedDisk$partitionNumber $mountPoint" -runAsSudo
 		LogMsg "Return value of RunLinuxCmd: $out"
+
 		Add-Content -Value $formatDiskOut -Path $LogPath -Force
 		$ddOut = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "dd if=/dev/zero bs=1024 count=1000000 of=$mountPoint/file_1GB" -runAsSudo -runMaxAllowedTime 1200
 		WaitFor -seconds 10
 		Add-Content -Value $ddOut -Path $LogPath
-		try
-		{
-			$out = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "umount $mountPoint" -runAsSudo 
+
+		try	{
+			$out = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "umount $mountPoint" -runAsSudo
 			LogMsg "Return value of RunLinuxCmd: $out"
-		}
-		catch
-		{
+		} catch {
 			LogMsg "umount failed. Trying umount -l"
-			$out = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "umount -l $mountPoint" -runAsSudo 
+			$out = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "umount -l $mountPoint" -runAsSudo
 			LogMsg "Return value of RunLinuxCmd: $out"
 		}
+
 		$dmesgAfter = RunLinuxCmd -username $testVMUsername -password $testVMPassword -ip $testVMVIP -port $testVMSSHport -command "dmesg" -runMaxAllowedTime 30 -runAsSudo
 		$addedLines = $dmesgAfter.Replace($dmesgBefore,$null)
 		LogMsg "Kernel Logs : $($addedLines.Replace('[32m','').Replace('[0m[33m','').Replace('[0m',''))" -LinuxConsoleOuput
-		$retValue = "PASS"	
-	}
-	else
-	{
+		$retValue = "PASS"
+	} else {
 		LogError "VM is not Alive."
 		LogError "Aborting Test."
 		$retValue = "Aborted"
@@ -2205,197 +1924,150 @@ Function PerformIOTestOnDisk($testVMObject, [string]$attachedDisk, [string]$disk
 	return $retValue
 }
 
-Function RetryOperation($operation, $description, $expectResult=$null, $maxRetryCount=10, $retryInterval=10, [switch]$NoLogsPlease, [switch]$ThrowExceptionOnFailure)
-{
+Function RetryOperation($operation, $description, $expectResult=$null, $maxRetryCount=10, $retryInterval=10, [switch]$NoLogsPlease, [switch]$ThrowExceptionOnFailure) {
 	$retryCount = 1
-	
-	do
-	{
+
+	do {
 		LogMsg "Attempt : $retryCount/$maxRetryCount : $description" -NoLogsPlease $NoLogsPlease
 		$ret = $null
 		$oldErrorActionValue = $ErrorActionPreference
 		$ErrorActionPreference = "Stop"
-		
-		try
-		{
+
+		try {
 			$ret = Invoke-Command -ScriptBlock $operation
-			if ($null -ne $expectResult)
-			{
-				if ($ret -match $expectResult)
-				{
+			if ($null -ne $expectResult) {
+				if ($ret -match $expectResult) {
 					return $ret
-				}
-				else
-				{
+				} else {
 					$ErrorActionPreference = $oldErrorActionValue
 					$retryCount ++
 					WaitFor -seconds $retryInterval
 				}
-			}
-			else
-			{
+			} else {
 				return $ret
 			}
-		}
-		catch
-		{
+		} catch {
 			$retryCount ++
 			WaitFor -seconds $retryInterval
-			if ( $retryCount -le $maxRetryCount )
-			{
+			if ( $retryCount -le $maxRetryCount ) {
 				continue
 			}
-		}
-		finally
-		{
+		} finally {
 			$ErrorActionPreference = $oldErrorActionValue
 		}
-		if ($retryCount -ge $maxRetryCount)
-		{
-			LogError "Command '$operation' Failed." 
+
+		if ($retryCount -ge $maxRetryCount) {
+			LogError "Command '$operation' Failed."
 			break;
 		}
 	} while ($True)
-	
-	if ($ThrowExceptionOnFailure)
-	{
+
+	if ($ThrowExceptionOnFailure) {
 		ThrowException -Exception "Command '$operation' Failed."
-	}
-	else 
-	{
-		return $null	
+	} else {
+		return $null
 	}
 }
 
-Function GetFilePathsFromLinuxFolder ([string]$folderToSearch, $IpAddress, $SSHPort, $username, $password, $maxRetryCount=20, [string]$expectedFiles)
-{
+Function GetFilePathsFromLinuxFolder ([string]$folderToSearch, $IpAddress, $SSHPort, $username, $password, $maxRetryCount=20, [string]$expectedFiles) {
 	$parentFolder = $folderToSearch.Replace("/" + $folderToSearch.Split("/")[($folderToSearch.Trim().Split("/").Count)-1],"")
 	$LogFilesPaths = ""
 	$LogFiles = ""
 	$retryCount = 1
-	while (($LogFilesPaths -eq "") -and ($retryCount -le $maxRetryCount ))
-	{
+
+	while (($LogFilesPaths -eq "") -and ($retryCount -le $maxRetryCount )) {
 		LogMsg "Attempt $retryCount/$maxRetryCount : Getting all file paths inside $folderToSearch"
 		$lsOut = RunLinuxCmd -username $username -password $password -ip $IpAddress -port $SSHPort -command "ls -lR $parentFolder > /home/$user/listDir.txt" -runAsSudo -ignoreLinuxExitCode
 		RemoteCopy -downloadFrom $IpAddress -port $SSHPort -files "/home/$user/listDir.txt" -username $username -password $password -downloadTo $LogDir -download
 		$lsOut = Get-Content -Path "$LogDir\listDir.txt" -Force
 		Remove-Item "$LogDir\listDir.txt"  -Force | Out-Null
-		foreach ($line in $lsOut.Split("`n") )
-		{
+		foreach ($line in $lsOut.Split("`n") ) {
 			$line = $line.Trim()
-			if ($line -imatch $parentFolder)
-			{
+			if ($line -imatch $parentFolder) {
 				$currentFolder = $line.Replace(":","")
 			}
-			if ( ( ($line.Split(" ")[0][0])  -eq "-" ) -and ($currentFolder -imatch $folderToSearch) )
-			{
-				while ("  " -match $line)
-				{
+			if ( ( ($line.Split(" ")[0][0])  -eq "-" ) -and ($currentFolder -imatch $folderToSearch) ) {
+				while ("  " -match $line) {
 					$line = $line.Replace("  "," ")
 				}
 				$currentLogFile = $line.Split(" ")[8]
-				if ( $expectedFiles )
-				{
-					if ( $expectedFiles.Split(",") -contains $currentLogFile )
-					{
-						if ($LogFilesPaths)
-						{
+				if ( $expectedFiles ) {
+					if ( $expectedFiles.Split(",") -contains $currentLogFile ) {
+						if ($LogFilesPaths)	{
 							$LogFilesPaths += "," + $currentFolder + "/" + $currentLogFile
 							$LogFiles += "," + $currentLogFile
-						}
-						else
-						{
+						} else {
 							$LogFilesPaths = $currentFolder + "/" + $currentLogFile
 							$LogFiles += $currentLogFile
 						}
 						LogMsg "Found Expected File $currentFolder/$currentLogFile"
-					}
-					else
-					{
+					} else {
 						LogMsg "Ignoring File $currentFolder/$currentLogFile"
 					}
-				}
-				else
-				{
-					if ($LogFilesPaths)
-					{
+				} else {
+					if ($LogFilesPaths) {
 						$LogFilesPaths += "," + $currentFolder + "/" + $currentLogFile
 						$LogFiles += "," + $currentLogFile
-					}
-					else
-					{
+					} else {
 						$LogFilesPaths = $currentFolder + "/" + $currentLogFile
 						$LogFiles += $currentLogFile
 					}
 				}
 			}
 		}
-		if ($LogFilesPaths -eq "")
-		{
+		if ($LogFilesPaths -eq "") {
 			WaitFor -seconds 10
 		}
 		$retryCount += 1
 	}
-	if ( !$LogFilesPaths )
-	{
+
+	if ( !$LogFilesPaths ) {
 		LogMsg "No files found in $folderToSearch"
 	}
+
 	return $LogFilesPaths, $LogFiles
 }
 
-function ZipFiles( $zipfilename, $sourcedir )
-{
+function ZipFiles( $zipfilename, $sourcedir ) {
 	LogMsg "Creating '$zipfilename' from '$sourcedir'"
 	$currentDir = (Get-Location).Path
 	$7z = (Get-ChildItem .\Tools\7za.exe).FullName
 	$sourcedir = $sourcedir.Trim('\')
 	Set-Location $sourcedir
+
 	$out = Invoke-Expression "$7z a -mx5 $currentDir\$zipfilename * -r"
 	Set-Location $currentDir
-	if ($out -match "Everything is Ok")
-	{
+
+	if ($out -match "Everything is Ok") {
 		LogMsg "$currentDir\$zipfilename created successfully."
 	}
 }
 
-Function GetStorageAccountFromRegion($Region,$StorageAccount)
-{
-#region Select Storage Account Type
+Function GetStorageAccountFromRegion($Region,$StorageAccount) {
+	#region Select Storage Account Type
 	$RegionName = $Region.Replace(" ","").Replace('"',"").ToLower()
 	$regionStorageMapping = [xml](Get-Content .\XML\RegionAndStorageAccounts.xml)
-	if ($StorageAccount)
-	{
-		if ( $StorageAccount -imatch "ExistingStorage_Standard" )
-		{
+
+	if ($StorageAccount) {
+		if ( $StorageAccount -imatch "ExistingStorage_Standard" ) {
 			$StorageAccountName = $regionStorageMapping.AllRegions.$RegionName.StandardStorage
-		}
-		elseif ( $StorageAccount -imatch "ExistingStorage_Premium" )
-		{
+		} elseif ( $StorageAccount -imatch "ExistingStorage_Premium" ) {
 			$StorageAccountName = $regionStorageMapping.AllRegions.$RegionName.PremiumStorage
-		}
-		elseif ( $StorageAccount -imatch "NewStorage_Standard" )
-		{
+		} elseif ( $StorageAccount -imatch "NewStorage_Standard" ) {
 			$StorageAccountName = "NewStorage_Standard_LRS"
-		}
-		elseif ( $StorageAccount -imatch "NewStorage_Premium" )
-		{
+		} elseif ( $StorageAccount -imatch "NewStorage_Premium" ) {
 			$StorageAccountName = "NewStorage_Premium_LRS"
-		}
-		elseif ($StorageAccount -eq "")
-		{
+		} elseif ($StorageAccount -eq "") {
 			$StorageAccountName = $regionStorageMapping.AllRegions.$RegionName.StandardStorage
 		}
-	}
-	else 
-	{
-		$StorageAccountName = $regionStorageMapping.AllRegions.$RegionName.StandardStorage  
+	} else {
+		$StorageAccountName = $regionStorageMapping.AllRegions.$RegionName.StandardStorage
 	}
 	LogMsg "Selected : $StorageAccountName"
 	return $StorageAccountName
 }
 
-function CreateTestResultObject()
-{
+function CreateTestResultObject() {
 	$objNode = New-Object -TypeName PSObject
 	Add-Member -InputObject $objNode -MemberType NoteProperty -Name TestResult -Value $null -Force
 	Add-Member -InputObject $objNode -MemberType NoteProperty -Name TestSummary -Value $null -Force
